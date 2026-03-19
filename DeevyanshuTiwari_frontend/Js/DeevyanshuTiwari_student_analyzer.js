@@ -36,21 +36,21 @@ function calculateTotalMarks(student) {
     return total;
 }
 
-// console.log("Lalit total marks :",calculateTotalMarks(students[0]));
-// console.log("Rahul total marks :",calculateTotalMarks(students[1]));
+console.log("Lalit total marks :", calculateTotalMarks(students[0]));
+console.log("Rahul total marks :", calculateTotalMarks(students[1]));
 
 //Average Calculation
-function calculateAverage(student){
+function calculateAverage(student) {
     const total = calculateTotalMarks(student);
     return total / student.marks.length;
 }
 
-// console.log("Lalit Average",calculateAverage(students[0]));
-// console.log("Rahul Average",calculateAverage(students[1]));
+console.log("Lalit Average", calculateAverage(students[0]));
+console.log("Rahul Average", calculateAverage(students[1]));
 
 // Subject-wise Highest Score
 
-function subjectHighestScore(students){
+function subjectHighestScore(students) {
 
     let subjects = students[0].marks.map(m => m.subject);
 
@@ -62,7 +62,7 @@ function subjectHighestScore(students){
         students.forEach(student => {
             let sub = student.marks.find(m => m.subject === subject);
 
-            if(sub.score > highest){
+            if (sub.score > highest) {
                 highest = sub.score;
                 topper = student.name;
             }
@@ -71,11 +71,11 @@ function subjectHighestScore(students){
         console.log(`Highest in ${subject}: ${topper} (${highest})`);
     });
 }
-// subjectHighestScore(students);
+subjectHighestScore(students);
 
 // Subject-wise Average
 
-function subjectAverage(students){
+function subjectAverage(students) {
 
     let subjects = students[0].marks.map(m => m.subject);
 
@@ -94,10 +94,10 @@ function subjectAverage(students){
     });
 }
 
-// subjectAverage(students);
+subjectAverage(students);
 
 // Topper Identification
-function findTopper(students){
+function findTopper(students) {
 
     let maxMarks = 0;
     let topper = "";
@@ -105,7 +105,7 @@ function findTopper(students){
     students.forEach(student => {
         let total = calculateTotalMarks(student);
 
-        if(total > maxMarks){
+        if (total > maxMarks) {
             maxMarks = total;
             topper = student.name;
         }
@@ -114,19 +114,38 @@ function findTopper(students){
     console.log(`Class Topper: ${topper} with ${maxMarks} marks`);
 }
 
-// findTopper(students);
+findTopper(students);
 
 // Grade Logic
 
-function calculateGrade(student){
+function calculateGrade(student) {
 
     let avg = calculateAverage(student);
 
-    if(avg >= 85) return "A";
-    else if(avg >= 70) return "B";
-    else if(avg >= 50) return "C";
+    if (avg >= 85) return "A";
+    else if (avg >= 70) return "B";
+    else if (avg >= 50) return "C";
     else return "Fail";
 }
 
-console.log("Lalit Grade :",calculateGrade(students[0]));
-console.log("Rahul Grade :",calculateGrade(students[1]));
+console.log("Lalit Grade :", calculateGrade(students[0]));
+console.log("Rahul Grade :", calculateGrade(students[1]));
+
+// Fail Conditions
+function checkFailCondition(student) {
+
+    for (let sub of student.marks) {
+        if (sub.score <= 40) {
+            return `Fail (Failed in ${sub.subject})`;
+        }
+    }
+
+    if (student.attendance < 75) {
+        return "Fail (Low Attendance)";
+    }
+
+    return null;
+}
+
+console.log("Lalit grade :", checkFailCondition(students[0]))
+console.log("Rahul grade :", checkFailCondition(students[1]))
