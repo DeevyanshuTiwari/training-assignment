@@ -36,8 +36,8 @@ function calculateTotalMarks(student) {
     return total;
 }
 
-console.log("Lalit total marks :",calculateTotalMarks(students[0]));
-console.log("Rahul total marks :",calculateTotalMarks(students[1]));
+// console.log("Lalit total marks :",calculateTotalMarks(students[0]));
+// console.log("Rahul total marks :",calculateTotalMarks(students[1]));
 
 //Average Calculation
 function calculateAverage(student){
@@ -45,8 +45,8 @@ function calculateAverage(student){
     return total / student.marks.length;
 }
 
-console.log("Lalit Average",calculateAverage(students[0]));
-console.log("Rahul Average",calculateAverage(students[1]));
+// console.log("Lalit Average",calculateAverage(students[0]));
+// console.log("Rahul Average",calculateAverage(students[1]));
 
 // Subject-wise Highest Score
 
@@ -71,4 +71,27 @@ function subjectHighestScore(students){
         console.log(`Highest in ${subject}: ${topper} (${highest})`);
     });
 }
-subjectHighestScore(students);
+// subjectHighestScore(students);
+
+// Subject-wise Average
+
+function subjectAverage(students){
+
+    let subjects = students[0].marks.map(m => m.subject);
+
+    subjects.forEach(subject => {
+
+        let total = 0;
+
+        students.forEach(student => {
+            let sub = student.marks.find(m => m.subject === subject);
+            total += sub.score;
+        });
+
+        let avg = total / students.length;
+
+        console.log(`Average ${subject} Score: ${avg}`);
+    });
+}
+
+subjectAverage(students);
