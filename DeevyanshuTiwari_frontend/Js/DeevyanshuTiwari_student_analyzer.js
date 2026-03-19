@@ -38,3 +38,12 @@ function calculateTotalMarks(student) {
 
 console.log("Lalit total marks :",calculateTotalMarks(students[0]));
 console.log("Rahul total marks :",calculateTotalMarks(students[1]));
+
+//Average Calculation
+function calculateAverage(student){
+    const total = calculateTotalMarks(student);
+    return total / student.marks.length;
+}
+
+console.log("Lalit Average",calculateAverage(students[0]));
+console.log("Rahul Average",calculateAverage(students[1]));
