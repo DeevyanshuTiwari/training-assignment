@@ -94,4 +94,24 @@ function subjectAverage(students){
     });
 }
 
-subjectAverage(students);
+// subjectAverage(students);
+
+// Topper Identification
+function findTopper(students){
+
+    let maxMarks = 0;
+    let topper = "";
+
+    students.forEach(student => {
+        let total = calculateTotalMarks(student);
+
+        if(total > maxMarks){
+            maxMarks = total;
+            topper = student.name;
+        }
+    });
+
+    console.log(`Class Topper: ${topper} with ${maxMarks} marks`);
+}
+
+findTopper(students);
