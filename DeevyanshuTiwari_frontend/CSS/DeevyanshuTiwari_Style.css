@@ -200,3 +200,14 @@ footer{
     padding:15px;
     font-size:14px;
 }
+
+/* Adding responsice design for navigation vertically on smaller screen */
+/* it will apply when Screen size <= 768px */
+@media(max-width:768px){
+
+    nav ul{
+        flex-direction:column;
+        align-items:center;
+    }
+
+}
