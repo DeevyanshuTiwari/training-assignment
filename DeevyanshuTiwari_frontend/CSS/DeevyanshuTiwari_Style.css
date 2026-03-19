@@ -96,3 +96,24 @@ section{
 section h2{
     margin-bottom:10px;
 }
+
+
+/* Education table styling */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+table th,
+table td{
+    border:1px solid #0f0101;
+    padding:10px;
+    text-align:center;
+}
+
+table th{
+    background:#2c3e50;
+    color:white;
+}
