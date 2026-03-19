@@ -1,0 +1,213 @@
+/* Global Styling */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color:#f4f6f9;
+    color:#333;
+    line-height:1.6;
+    padding:20px;
+}
+
+/* Header Styling */
+
+header{
+    text-align:center;
+    background:#2c3e50;
+    color:white;
+    padding:25px;
+    border-radius:8px;
+}
+
+header h1{
+    font-size:32px;
+}
+
+header h2{
+    font-size:18px;
+}
+
+/* Navigation styling */
+
+nav{
+    margin-top: 20px;
+}
+
+nav ul{
+    display:flex;
+    justify-content:center;
+    list-style:none;
+    background:#34495e;
+    border-radius:6px;
+}
+
+nav ul li{
+    margin:10px;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:white;
+    padding:8px 14px;
+    transition: width 0.3s;
+}
+
+/* Hover effect */
+/* color changes when it hover */
+nav ul li a:hover{
+    background:#89b9af;
+    border-radius:4px;
+}
+
+/* About Me */
+#about {
+    display: flex;
+    gap:50px
+}
+
+#about p {
+    margin-top: 20px;
+}
+
+img{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    border:3px solid white;
+    margin-top:10px;
+    border: 1px solid black;
+}
+
+/* Improving spacing and layout in Section */
+
+section{
+    margin-top:25px;
+    padding:20px;
+    background:white;
+    border-radius:6px;
+    box-shadow:0 2px 6px rgba(154, 130, 130, 0.1);
+}
+
+section h2{
+    margin-bottom:10px;
+}
+
+
+/* Education table styling */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+table th,
+table td{
+    border:1px solid #0f0101;
+    padding:10px;
+    text-align:center;
+}
+
+table th{
+    background:#2c3e50;
+    color:white;
+}
+
+/* Skill section styling */
+
+#skills{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+
+#skills ul ul{
+    list-style:circle;
+    margin-top:10px;
+    margin-left:20px;
+    font-weight:normal;
+}
+
+#skills ul ul li{
+    margin-bottom:6px;
+    color:#444;
+}
+
+/* Project section */
+
+#projects li{
+    margin-bottom:15px;
+}
+
+#projects ol{
+    margin-left:15px;
+}
+
+/* Hobbies Section styling */
+
+#hobbies ul {
+    margin-left: 15px;
+}
+
+/* Contact form styling */
+
+form{
+    margin-top:15px;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+/* Styled button */
+
+input[type="submit"]{
+    background:#2c3e50;
+    color:white;
+    margin-top:15px;
+    cursor:pointer;
+}
+
+input[type="submit"]:hover{
+    background:#89b9af;
+}
+
+/* Footer section styling */
+
+footer{
+    text-align:center;
+    margin-top:30px;
+    background:#2c3e50;
+    color:white;
+    padding:15px;
+    font-size:14px;
+}
+
+/* Adding responsice design for navigation vertically on smaller screen */
+/* it will apply when Screen size <= 768px */
+@media(max-width:768px){
+
+    nav ul{
+        flex-direction:column;
+        align-items:center;
+    }
+
+}
