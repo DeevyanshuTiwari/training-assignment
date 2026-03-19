@@ -47,3 +47,28 @@ function calculateAverage(student){
 
 console.log("Lalit Average",calculateAverage(students[0]));
 console.log("Rahul Average",calculateAverage(students[1]));
+
+// Subject-wise Highest Score
+
+function subjectHighestScore(students){
+
+    let subjects = students[0].marks.map(m => m.subject);
+
+    subjects.forEach(subject => {
+
+        let highest = 0;
+        let topper = "";
+
+        students.forEach(student => {
+            let sub = student.marks.find(m => m.subject === subject);
+
+            if(sub.score > highest){
+                highest = sub.score;
+                topper = student.name;
+            }
+        });
+
+        console.log(`Highest in ${subject}: ${topper} (${highest})`);
+    });
+}
+subjectHighestScore(students);
