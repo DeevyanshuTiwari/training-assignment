@@ -189,3 +189,14 @@ input[type="submit"]{
 input[type="submit"]:hover{
     background:#89b9af;
 }
+
+/* Footer section styling */
+
+footer{
+    text-align:center;
+    margin-top:30px;
+    background:#2c3e50;
+    color:white;
+    padding:15px;
+    font-size:14px;
+}
