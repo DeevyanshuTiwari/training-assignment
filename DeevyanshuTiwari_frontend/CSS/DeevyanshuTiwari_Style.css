@@ -31,3 +31,35 @@ header h1{
 header h2{
     font-size:18px;
 }
+
+/* Navigation styling */
+
+nav{
+    margin-top: 20px;
+}
+
+nav ul{
+    display:flex;
+    justify-content:center;
+    list-style:none;
+    background:#34495e;
+    border-radius:6px;
+}
+
+nav ul li{
+    margin:10px;
+}
+
+nav ul li a{
+    text-decoration:none;
+    color:white;
+    padding:8px 14px;
+    transition: width 0.3s;
+}
+
+/* Hover effect */
+/* color changes when it hover */
+nav ul li a:hover{
+    background:#89b9af;
+    border-radius:4px;
+}
