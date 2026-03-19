@@ -155,3 +155,37 @@ table th{
 #hobbies ul {
     margin-left: 15px;
 }
+
+/* Contact form styling */
+
+form{
+    margin-top:15px;
+}
+
+label{
+    display:block;
+    margin-top:10px;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+    border:1px solid #ccc;
+    border-radius:4px;
+}
+
+/* Styled button */
+
+input[type="submit"]{
+    background:#2c3e50;
+    color:white;
+    margin-top:15px;
+    cursor:pointer;
+}
+
+input[type="submit"]:hover{
+    background:#89b9af;
+}
