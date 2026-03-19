@@ -117,3 +117,25 @@ table th{
     background:#2c3e50;
     color:white;
 }
+
+/* Skill section styling */
+
+#skills{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+
+#skills ul ul{
+    list-style:circle;
+    margin-top:10px;
+    margin-left:20px;
+    font-weight:normal;
+}
+
+#skills ul ul li{
+    margin-bottom:6px;
+    color:#444;
+}
