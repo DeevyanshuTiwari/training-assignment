@@ -139,3 +139,13 @@ table th{
     margin-bottom:6px;
     color:#444;
 }
+
+/* Project section */
+
+#projects li{
+    margin-bottom:15px;
+}
+
+#projects ol{
+    margin-left:15px;
+}
