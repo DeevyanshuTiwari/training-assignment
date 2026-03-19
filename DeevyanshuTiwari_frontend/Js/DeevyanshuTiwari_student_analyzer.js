@@ -114,4 +114,19 @@ function findTopper(students){
     console.log(`Class Topper: ${topper} with ${maxMarks} marks`);
 }
 
-findTopper(students);
+// findTopper(students);
+
+// Grade Logic
+
+function calculateGrade(student){
+
+    let avg = calculateAverage(student);
+
+    if(avg >= 85) return "A";
+    else if(avg >= 70) return "B";
+    else if(avg >= 50) return "C";
+    else return "Fail";
+}
+
+console.log("Lalit Grade :",calculateGrade(students[0]));
+console.log("Rahul Grade :",calculateGrade(students[1]));
