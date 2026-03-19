@@ -82,3 +82,17 @@ img{
     margin-top:10px;
     border: 1px solid black;
 }
+
+/* Improving spacing and layout in Section */
+
+section{
+    margin-top:25px;
+    padding:20px;
+    background:white;
+    border-radius:6px;
+    box-shadow:0 2px 6px rgba(154, 130, 130, 0.1);
+}
+
+section h2{
+    margin-bottom:10px;
+}
