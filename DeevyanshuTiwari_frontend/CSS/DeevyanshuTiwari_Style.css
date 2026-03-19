@@ -63,3 +63,22 @@ nav ul li a:hover{
     background:#89b9af;
     border-radius:4px;
 }
+
+/* About Me */
+#about {
+    display: flex;
+    gap:50px
+}
+
+#about p {
+    margin-top: 20px;
+}
+
+img{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    border:3px solid white;
+    margin-top:10px;
+    border: 1px solid black;
+}
