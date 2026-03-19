@@ -13,3 +13,21 @@ body{
     line-height:1.6;
     padding:20px;
 }
+
+/* Header Styling */
+
+header{
+    text-align:center;
+    background:#2c3e50;
+    color:white;
+    padding:25px;
+    border-radius:8px;
+}
+
+header h1{
+    font-size:32px;
+}
+
+header h2{
+    font-size:18px;
+}
