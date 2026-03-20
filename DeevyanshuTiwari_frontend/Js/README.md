@@ -1,4 +1,4 @@
-## 📸 Console Outputs Screenshots
+## Console Outputs Screenshots
 
 ### 1. Total Marks  
 Shows total marks of each student calculated by summing all subject scores.  
