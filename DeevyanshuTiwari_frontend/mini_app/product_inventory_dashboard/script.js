@@ -156,5 +156,11 @@ function deleteProduct(id) {
     updateUI();
 }
 
+// Events 
+document.getElementById("searchInput").oninput = updateUI;
+document.getElementById("categoryFilter").onchange = updateUI;
+document.getElementById("lowStockFilter").onchange = updateUI;
+document.getElementById("sortBy").onchange = updateUI;
+
 //calling update UI
 updateUI();
