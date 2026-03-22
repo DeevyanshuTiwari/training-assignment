@@ -123,6 +123,31 @@ function updateUI() {
   showProducts(data);
   showAnalytics();
 }
+// Add product
+function addProduct() {
+  let name = document.getElementById("productName").value;
+  let price = Number(document.getElementById("productPrice").value);
+  let stock = Number(document.getElementById("productStock").value);
+  let category = document.getElementById("productCategory").value;
+
+  if (!name || price <= 0 || stock < 0 || !category) {
+    alert("Invalid Input");
+    return;
+  }
+
+  let newProduct = {
+    id: Date.now(),
+    name,
+    price,
+    stock,
+    category
+  };
+
+  products.push(newProduct);
+  saveData();
+  updateUI();
+  location.reload();
+}
 
 //calling update UI
 updateUI();
