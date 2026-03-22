@@ -50,6 +50,25 @@
         <button disabled>Prev</button>
         <button>Next</button>
     </div>
+
+    <!--Add Product -->
+    <h2>Add Product</h2>
+    <div class="form">
+        <input type="text" id="productName" placeholder="Name">
+        <input type="number" id="productPrice" placeholder="Price">
+        <input type="number" id="productStock" placeholder="Stock">
+
+        <select id="productCategory">
+            <option value="">Select Category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="books">Books</option>
+            <option value="accessories">Accessories</option>
+        </select>
+
+        <button onclick="addProduct()">Add Product</button>
+    </div>
+
     <script src="script.js"></script>
 </body>
 
