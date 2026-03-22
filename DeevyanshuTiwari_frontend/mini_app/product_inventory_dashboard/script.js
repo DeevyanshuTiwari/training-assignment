@@ -9,3 +9,8 @@ let products = JSON.parse(localStorage.getItem("products")) || [
     { id: 11, name: "Sunglasses", price: 1000, stock: 6,category: "accessories" },
     { id: 12, name: "Bag", price: 1500,stock: 3,category: "accessories", }
 ];
+
+// Saving data
+function saveData() {
+  localStorage.setItem("products", JSON.stringify(products));
+}
