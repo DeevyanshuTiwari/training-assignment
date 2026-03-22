@@ -35,6 +35,12 @@ h2 {
     transition: 0.2s;
 }
 
+/* Focus Effect */
+.controls input:focus,
+.controls select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 3px rgba(79, 70, 229, 0.4);
+}
 
 /* Checkbox Label  */
 .controls label {
