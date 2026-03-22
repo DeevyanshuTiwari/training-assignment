@@ -14,3 +14,115 @@ let products = JSON.parse(localStorage.getItem("products")) || [
 function saveData() {
   localStorage.setItem("products", JSON.stringify(products));
 }
+let currentPage = 1;
+let pageSize = 8;
+
+// Show products 
+function showProducts(list) {
+  let container = document.getElementById("productGrid");
+  container.innerHTML = "";
+
+  let start = (currentPage - 1) * pageSize;
+  let end = start + pageSize;
+  let pageItems = list.slice(start, end);
+
+  pageItems.forEach(p => {
+    let div = document.createElement("div");
+    div.className = "product-card";
+
+    div.innerHTML = `
+      <h3>${p.name}</h3>
+      <p>Price: ₹${p.price}</p>
+      <p>Stock: ${p.stock}</p>
+      <p>Category: ${p.category}</p>
+      <button onclick="deleteProduct(${p.id})">Delete</button>
+    `;
+
+    container.appendChild(div);
+  });
+  showPagination(list.length);
+  if(list.length===0){ 
+    container.innerHTML="No Item"
+}
+}
+
+// Filters
+function applyFilters() {
+  let search = document.getElementById("searchInput").value.toLowerCase();
+  let category = document.getElementById("categoryFilter").value;
+  let lowStock = document.getElementById("lowStockFilter").checked;
+  let sort = document.getElementById("sortBy").value;
+
+  let result = products.filter(p => {
+    return (
+      p.name.toLowerCase().includes(search) &&
+      (category === "all" || p.category === category) &&
+      (!lowStock || p.stock < 5)
+    );
+  });
+
+  // SORT
+  if (sort === "priceLowToHigh") {
+    result.sort((a, b) => a.price - b.price);
+  } else if (sort === "priceHighToLow") {
+    result.sort((a, b) => b.price - a.price);
+  } else if (sort === "nameAZ") {
+    result.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sort === "nameZA") {
+    result.sort((a, b) => b.name.localeCompare(a.name));
+  }
+
+  return result;
+}
+
+// Pagination
+function showPagination(total) {
+  let div = document.getElementById("pagination");
+  div.innerHTML = "";
+
+  let totalPages = Math.ceil(total / pageSize);
+
+  let prev = document.createElement("button");
+  prev.innerText = "Prev";
+  prev.onclick = () => {
+    currentPage--;
+    updateUI();
+  };
+  prev.disabled = currentPage === 1;
+
+  let next = document.createElement("button");
+  next.innerText = "Next";
+  next.onclick = () => {
+    currentPage++;
+    updateUI();
+  };
+  next.disabled = currentPage === totalPages;
+
+  div.append(prev, next);
+}
+
+// Analytics
+function showAnalytics() {
+  document.getElementById("totalProductsValue").innerText = products.length;
+
+  let totalValue = 0;
+  let outOfStock = 0;
+
+  products.forEach(p => {
+    totalValue += p.price * p.stock;
+    if (p.stock === 0) outOfStock++;
+  });
+
+  document.getElementById("totalInventoryValue").innerText = "₹" + totalValue;
+  document.getElementById("outOfStockValue").innerText = outOfStock;
+}
+
+// Update UI
+function updateUI() {
+  let data = applyFilters();
+  showProducts(data);
+  showAnalytics();
+}
+
+//calling update UI
+updateUI();
