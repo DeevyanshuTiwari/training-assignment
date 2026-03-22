@@ -53,49 +53,49 @@ It allows users to:
 
 ### 1. 🏠 Dashboard Overview  
 Shows the complete layout including controls, analytics, and product grid.  
-![Dashboard](<ScreenShot\Screenshot 2026-03-22 212259.png>)
+![Dashboard](<ScreenShot/Screenshot 2026-03-22 212259.png>)
 
 ---
 
 ### 2. 🔍 Product Search Feature  
 Demonstrates real-time search functionality filtering products by name.  
-![Search](<ScreenShot\Screenshot 2026-03-22 212359.png>)
+![Search](<ScreenShot/Screenshot 2026-03-22 212359.png>)
 
 ---
 
 ### 3. 📂 Category Filter  
 Displays products filtered based on selected category.  
-![Category Filter](<ScreenShot\Screenshot 2026-03-22 212419.png>)
+![Category Filter](<ScreenShot/Screenshot 2026-03-22 212419.png>)
 
 ---
 
 ### 4. ⚠️ Low Stock Filter  
 Shows only products with stock less than 5.  
-![Low Stock](<ScreenShot\Screenshot 2026-03-22 212441.png>)
+![Low Stock](<ScreenShot/Screenshot 2026-03-22 212441.png>)
 
 ---
 
 ### 5. 🔃 Sorting Functionality  
 Displays products sorted by price or name.  
-![Sorting](<ScreenShot\Screenshot 2026-03-22 212515.png>)
+![Sorting](<ScreenShot/Screenshot 2026-03-22 212515.png>)
 
 ---
 
 ### 6. ➕ Add Product  
 Shows adding a new product through input form.  
-![Add Product](<ScreenShot\Screenshot 2026-03-22 212640.png>)
+![Add Product](<ScreenShot/Screenshot 2026-03-22 212640.png>)
 
 ---
 
 ### 7. ❌ No Item  
 Showing No products available in board.  
-![Delete](<ScreenShot\Screenshot 2026-03-22 213741.png>)
+![Delete](<ScreenShot/Screenshot 2026-03-22 213741.png>)
 
 ---
 
 ### 8. 📊 Inventory Analytics  
 Displays total products, total value, and out-of-stock count.  
-![Analytics](<ScreenShot\Screenshot 2026-03-22 212640.png>)
+![Analytics](<ScreenShot/Screenshot 2026-03-22 212640.png>)
 
 ---
 
