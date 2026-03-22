@@ -1,0 +1,194 @@
+body {
+    font-family: Arial;
+    padding: 20px;
+    background: #f5f5f5;
+}
+
+h1,
+h2 {
+    text-align: center;
+}
+
+/* Controls Container */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+/* Input and Select */
+.controls input[type="text"],
+.controls select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 14px;
+    min-width: 150px;
+    transition: 0.2s;
+}
+
+/* Focus Effect */
+.controls input:focus,
+.controls select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 3px rgba(79, 70, 229, 0.4);
+}
+
+/* Checkbox Label  */
+.controls label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Analytics */
+.analytics {
+    background-color: #4CAF50;
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.analytics p {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    width: 30%;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Value Styling */
+.analytics span {
+    display: block;
+    margin-top: 8px;
+    font-size: 20px;
+    color: #4CAF50;
+}
+
+/* Product Container */
+#productGrid {
+    background-color: #a9efe8;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 28px;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+/* Product Card */
+.product-card {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+/* Product Title */
+.product-card h3 {
+    margin: 0 0 10px;
+}
+
+/* Button */
+.product-card button {
+    margin-top: 10px;
+    padding: 6px 12px;
+    border: none;
+    background: #f44336;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Hover Effect */
+.product-card button:hover {
+    background: #d32f2f;
+}
+
+/* Pagination */
+#pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#pagination button {
+    margin: 5px;
+    padding: 8px 12px;
+    border: none;
+    background: #2196F3;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#pagination button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Form Container */
+
+h2 {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.form {
+  background-color: #9692db;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-top: 15px;
+  padding: 20px;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.form input,
+.form select {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  width: 150px;
+}
+
+.form button {
+  padding: 10px 15px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.form button:hover {
+  background: #388E3C;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
