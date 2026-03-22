@@ -9,6 +9,30 @@
 <body>
     <h1>Product Inventory Dashboard</h1>
     
+<!--Controls -->
+
+<div class="controls">
+  <input type="text" id="searchInput" placeholder="Search product">
+
+  <select id="categoryFilter">
+    <option value="all">All Categories</option>
+    <option value="electronics">Electronics</option>
+    <option value="clothing">Clothing</option>
+    <option value="books">Books</option>
+    <option value="accessories">Accessories</option>
+  </select>
+
+  <label>
+    <input type="checkbox" id="lowStockFilter"> Low Stock (<5)
+  </label>
+
+  <select id="sortBy">
+    <option value="priceLowToHigh">Price Low → High</option>
+    <option value="priceHighToLow">Price High → Low</option>
+    <option value="nameAZ">Name A-Z</option>
+    <option value="nameZA">Name Z-A</option>
+  </select>
+</div>
     <script src="script.js"></script>
 </body>
 </html>
