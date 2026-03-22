@@ -43,3 +43,34 @@ h1, h2 {
   font-size: 14px;
   cursor: pointer;
 }
+
+/* Analytics */
+.analytics {
+  background-color: #4CAF50;
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.analytics p {
+  background: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  width: 30%;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Value Styling */
+.analytics span {
+  display: block;
+  margin-top: 8px;
+  font-size: 20px;
+  color: #4CAF50;
+}
+
