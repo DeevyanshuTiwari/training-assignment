@@ -1,0 +1,22 @@
+1. Abstract Class
+
+ Definition
+
+An abstract class is a class that cannot be instantiated and may contain both abstract (no body) and concrete (with body) methods.
+
+ # Key Features
+   -> Can have instance variables (state)
+   -> Can have constructors
+   -> Can have both abstract + concrete method
+
+2. Interface
+
+Definition
+
+An interface is a blueprint that contains only abstract methods (by default) and is used to achieve 100% abstraction.
+
+ # Key Features
+  -> Methods are public + abstract (by default)
+  -> Variables are public static final
+  -> No constructors
+  -> Supports multiple inheritance

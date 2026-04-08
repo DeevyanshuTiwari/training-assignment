@@ -1,0 +1,31 @@
+Encapsulation in Java
+
+Definition :-
+
+Encapsulation means wrapping data (variables) and methods into a single unit (class) and restricting direct access to the data.
+
+In simple words:
+  -> Hide internal data
+  -> Allow access through controlled methods
+
+
+  Example :-
+
+  class Student {
+    // Private data (hidden)
+    private int marks;
+
+    // Setter method
+    public void setMarks(int marks) {
+        if (marks >= 0 && marks <= 100) {
+            this.marks = marks;
+        } else {
+            System.out.println("Invalid marks");
+        }
+    }
+
+    // Getter method
+    public int getMarks() {
+        return marks;
+    }
+}
