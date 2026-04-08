@@ -1,0 +1,61 @@
+1. Primitive Data Types
+
+Definition
+Primitive types store the actual value directly in memory.
+
+ # Key Points
+  -> Stores actual value
+  -> Stored in stack memory
+  -> Faster access
+  -> Fixed size
+  -> Cannot store objects
+
+# Types in Primitive 
+Type	Example
+int	   |  10
+double |  99.5
+char   |  'A'
+boolean|  true
+
+#Example :-
+int a = 10;
+int b = a;
+
+b = 20;
+
+System.out.println(a); // 10
+System.out.println(b); // 20
+
+
+2. Reference Data Types
+
+Definition
+Reference types store the memory address (reference) of an object, not the actual data.
+
+# Examples
+  -> Class objects (Student, Car)
+  -> Arrays
+  -> Strings
+
+class Test {
+    int x;
+}
+
+Test obj1 = new Test();
+obj1.x = 10;
+
+Test obj2 = obj1;
+
+obj2.x = 20;
+
+System.out.println(obj1.x); // 20
+
+
+
+# Key Differences
+Feature	| Primitive	|Reference
+Stores	| Value	    | Address
+Memory	| Stack	    | Heap
+Copy	|Independent| Shared
+Null	|Not allowed| Allowed
+Example	|int, char	|String, Array
