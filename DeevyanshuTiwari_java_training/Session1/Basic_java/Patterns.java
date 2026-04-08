@@ -20,7 +20,7 @@ class PatternService {
     }
 }
 
-// Main class (only controls flow)
+// Main class
 public class Patterns {
 
     public static void main(String[] args) {
