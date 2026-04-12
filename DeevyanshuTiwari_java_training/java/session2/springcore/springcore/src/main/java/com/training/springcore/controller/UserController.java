@@ -21,6 +21,7 @@ public class UserController {
     // GET /users → returns all users
     @GetMapping
     public List<User> getAllUsers() {
+
         return userService.getAllUsers();
     }
 
