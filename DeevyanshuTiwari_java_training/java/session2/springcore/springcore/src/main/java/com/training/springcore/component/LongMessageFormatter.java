@@ -1,7 +1,7 @@
 package com.training.springcore.component;
 
 import org.springframework.stereotype.Component;
-
+@Component
 public class LongMessageFormatter {
 
     public String format(String topic) {
