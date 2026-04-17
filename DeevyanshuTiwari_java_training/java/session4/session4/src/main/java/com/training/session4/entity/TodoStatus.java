@@ -1,2 +1,6 @@
-package com.training.session4.entity;public class TodoStatus {
+package com.training.session4.entity;
+
+public enum TodoStatus {
+    PENDING,
+    COMPLETED
 }
