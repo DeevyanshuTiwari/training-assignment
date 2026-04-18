@@ -98,9 +98,10 @@ public class TodoService {
                     return new TodoNotFoundException(id);
                 });
 
-        if (dto.getStatus() != null && !dto.getStatus().equals(existing.getStatus())) {
+        if (dto.getStatus() != null) {
             log.info("Status transition requested: {} → {}", existing.getStatus(), dto.getStatus());
             validateStatusTransition(existing.getStatus(), dto.getStatus());
+            existing.setStatus(dto.getStatus());
         }
 
         existing.setTitle(dto.getTitle());
