@@ -1,0 +1,98 @@
+/* ============================================
+   Centered auth card styles (login/register)
+   ============================================ */
+
+:root{
+  --purple:#7c3aed;
+  --purple-dark:#6d28d9;
+  --bg:#f3f4f6;
+  --muted:#6b7280;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:#111827}
+
+/* Wrapper centers the card in viewport */
+.auth-wrapper{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:2rem;
+}
+
+/* Card: left decorative panel + right form panel */
+.auth-card{
+  width:1300px; /* fixed max width */
+  max-width:100%;
+  display:flex;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 18px 40px rgba(2,6,23,0.08);
+  background:transparent;
+}
+
+.card-left{
+  flex:1.05;
+  min-width:300px;
+  background: linear-gradient(135deg, #b794f4 0%, #7c3aed 45%, #fbbf24 100%);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:3rem;
+}
+
+.branding-content{ text-align:center }
+.branding-content .logo{ font-size:2.2rem; font-weight:700; margin-bottom:1rem; opacity:0.95 }
+.branding-content h1{ font-size:2.8rem; line-height:1.05; margin-bottom:0.5rem }
+.branding-content p{ color:rgba(255,255,255,0.92); opacity:0.95 }
+
+.card-right{
+  flex:1;
+  background:#ffffff;
+  padding:40px 48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.form-wrapper{ width:100%; max-width:420px }
+.form-title{ font-size:1.6rem; margin-bottom:6px; color:#111827 }
+.form-subtitle{ color:var(--muted); font-size:0.95rem; margin-bottom:18px }
+
+.auth-form{ display:flex; flex-direction:column; gap:14px }
+.form-group{ display:flex; flex-direction:column; gap:6px }
+.form-group label{ font-size:0.92rem; color:#374151 }
+.form-group input[type="text"], .form-group input[type="email"], .form-group input[type="password"], .form-group input[type="tel"], .form-group select{
+  padding:12px 14px; border-radius:8px; border:1px solid #e6e9ee; font-size:0.95rem; background:white
+}
+.form-group input:focus, .form-group select:focus{ outline:none; border-color:rgba(124,58,237,0.9); box-shadow:0 6px 18px rgba(124,58,237,0.06) }
+
+/* small helper text under inputs */
+.input-hint{ font-size:0.82rem; color:var(--muted); margin-top:4px }
+
+.btn-primary{ margin-top:6px; padding:12px 16px; background:var(--purple); color:white; border:none; border-radius:10px; font-weight:600; cursor:pointer; transition:all 0.18s ease }
+.btn-primary:hover{ background:var(--purple-dark); transform:translateY(-2px); box-shadow:0 10px 24px rgba(124,58,237,0.18) }
+
+.signup-link{ margin-top:12px; color:var(--muted); font-size:0.95rem; text-align:center }
+.signup-link a{ color:var(--purple); font-weight:600; text-decoration:none }
+
+/* Message box */
+.message-box{ display:none; margin-top:12px; padding:10px 12px; border-radius:8px; font-size:0.95rem; text-align:center }
+.message-box.show{ display:block }
+.message-box.success{ background:#ecfdf5; color:#065f46; border:1px solid #bbf7d0 }
+.message-box.error{ background:#fff1f2; color:#9f1239; border:1px solid #fecaca }
+
+/* Responsive: stack panels */
+@media (max-width:880px){
+  .auth-card{ flex-direction:column; width:100%; border-radius:12px }
+  .card-left{ padding:2rem 1.5rem }
+  .card-right{ padding:28px }
+  .branding-content h1{ font-size:2rem }
+}
+
+@media (max-width:420px){
+  .form-wrapper{ padding:0 4px }
+  .branding-content h1{ font-size:1.6rem }
+}
