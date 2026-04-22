@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Register - AuthApp</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="auth-wrapper">
+    <div class="auth-card">
+
+        <!-- Left decorative panel -->
+        <div class="card-left">
+            <div class="branding-content">
+                <div class="logo">A</div>
+                <h1>Join Us!</h1>
+                <p>Create your account to get started</p>
+            </div>
+        </div>
+
+        <!-- Right form panel -->
+        <div class="card-right">
+            <div class="form-wrapper">
+                <h2 class="form-title">Sign Up</h2>
+                <p class="form-subtitle">Create a new account to continue</p>
+
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="username@gmail.com" required>
+                        <small class="input-hint">Must be a valid Gmail address (example: you@gmail.com)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter 10 digits (e.g. 9876543210)" required>
+                        <small class="input-hint">Digits only, exactly 10 numbers</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                        <small class="input-hint">8–12 chars, include 1 uppercase and 1 special character</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select id="role" name="role" required>
+                            <option value="">-- Select --</option>
+                            <option value="CUSTOMER">Customer</option>
+                            <option value="ORGANIZER">Organizer</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                </form>
+
+                <div class="signup-link">Already have an account? <a href="login.html">Login</a></div>
+
+                <div id="messageBox" class="message-box"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/auth.js"></script>
+</body>
+</html>
