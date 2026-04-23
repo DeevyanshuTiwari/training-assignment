@@ -1,8 +1,8 @@
 
-// Backend base URL (update if your backend runs elsewhere)
+// Backend base URL
 const API_BASE_URL = 'http://localhost:8080/api/auth';
 
-// Helper: show messages in the page's message box
+
 function showMessage(type, text) {
   const box = document.getElementById('messageBox');
   if (!box) return;
@@ -37,7 +37,6 @@ if (loginForm) {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
-    // Simple validation
     if (!email) { showMessage('error','Email is required'); return; }
     if (!password) { showMessage('error','Password is required'); return; }
 
@@ -54,7 +53,7 @@ if (loginForm) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || res.statusText || 'Login failed');
 
-      // Expecting backend to return a token (e.g. { token: '...' })
+      // Expecting backend to return a token
       const token = data.token || data.accessToken || data.jwt;
       if (!token) throw new Error('No token returned from server');
 
@@ -140,9 +139,3 @@ if (registerForm) {
   });
 }
 
-/* ----------------------
-   COMMON helpers
-   ---------------------- */
-
-// Expose for debugging (optional)
-window.__authHelpers = { showMessage, clearMessage };
