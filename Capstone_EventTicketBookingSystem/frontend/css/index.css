@@ -1,0 +1,862 @@
+/* ================================================
+   STEP 2 — CSS STYLING
+   File: style.css
+
+   Table of Contents:
+   1. CSS Variables (Design Tokens)
+   2. Reset & Base Styles
+   3. Typography
+   4. Utility Classes
+   5. Buttons
+   6. Navbar / Header
+   7. Hero Section
+   8. Floating Cards
+   9. Modal Overlay
+   10. Modal Box
+   11. Modal Header & Footer
+   12. Form Styles
+   13. Alert Messages
+   14. Responsive (Mobile)
+================================================ */
+
+
+/* ================================================
+   1. CSS VARIABLES — Design Tokens
+   WHY: Define colors/sizes once here.
+        If you want to change purple → change ONE line.
+================================================ */
+:root {
+  /* Brand Colors */
+  --color-primary: #6C2BD9;         /* Main purple */
+  --color-primary-dark: #5a22b8;    /* Darker purple (hover) */
+  --color-primary-light: #ede9fe;   /* Very light purple (backgrounds) */
+  --color-accent: #f5c518;          /* Yellow accent (like screenshot logo star) */
+
+  /* Text Colors */
+  --color-text-dark: #1a1a2e;       /* Almost black — headings */
+  --color-text-body: #4b5563;       /* Medium gray — body text */
+  --color-text-muted: #9ca3af;      /* Light gray — hints, placeholders */
+  --color-text-white: #ffffff;
+
+  /* Backgrounds */
+  --color-bg-page: #f3f4f6;         /* Light gray page background */
+  --color-bg-white: #ffffff;
+  --color-bg-overlay: rgba(0, 0, 0, 0.6); /* Modal dark overlay */
+
+  /* Status Colors */
+  --color-success: #16a34a;
+  --color-success-bg: #dcfce7;
+  --color-error: #dc2626;
+  --color-error-bg: #fee2e2;
+
+  /* Borders */
+  --color-border: #e5e7eb;
+  --color-border-focus: #6C2BD9;
+
+  /* Spacing (multiples of 4px) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;  /* Pill shape */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
+  --shadow-purple: 0 4px 20px rgba(108, 43, 217, 0.30);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-slow: 0.4s ease;
+
+  /* Font */
+  --font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+
+/* ================================================
+   2. RESET & BASE STYLES
+   WHY: Remove browser inconsistencies so our
+        design looks the same everywhere.
+================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;   /* padding/border included in width */
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  /* Prevent scroll when modal is open (JS will add this class) */
+}
+
+/* Lock body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-family);
+  border: none;
+  background: none;
+}
+
+
+/* ================================================
+   3. TYPOGRAPHY
+================================================ */
+h1, h2, h3, h4 {
+  color: var(--color-text-dark);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+p {
+  color: var(--color-text-body);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+
+/* ================================================
+   4. UTILITY CLASSES
+================================================ */
+.text-center { text-align: center; }
+.text-muted   { color: var(--color-text-muted); }
+.mt-sm        { margin-top: var(--space-sm); }
+.mt-md        { margin-top: var(--space-md); }
+
+
+/* ================================================
+   5. BUTTONS
+   WHY: We have 4 button types — define them all
+        here so they stay consistent everywhere.
+================================================ */
+
+/* Base button reset + shared styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 10px 22px;
+  border-radius: var(--radius-full);   /* Pill shape like screenshot */
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+  border: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-1px);   /* Subtle lift on hover */
+}
+
+.btn:active {
+  transform: translateY(0);      /* Press down effect */
+}
+
+/* --- Primary: Solid Purple --- */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-white);
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-purple);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 6px 24px rgba(108, 43, 217, 0.40);
+}
+
+/* --- Outline: Purple border, transparent background --- */
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary-light);
+}
+
+/* --- Ghost: No border, subtle on hover --- */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-dark);
+  border-color: var(--color-border);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-bg-white);
+  border-color: var(--color-text-body);
+}
+
+/* --- Large size (for hero section) --- */
+.btn-large {
+  padding: 14px 32px;
+  font-size: 1rem;
+}
+
+/* --- Full width (for modal forms) --- */
+.btn-full {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  border-radius: var(--radius-md);
+  margin-top: var(--space-sm);
+}
+
+/* --- Disabled state (while API is loading) --- */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* --- Link-style button (for modal switch links) --- */
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color var(--transition-fast);
+}
+
+.link-btn:hover {
+  color: var(--color-primary-dark);
+}
+
+
+/* ================================================
+   6. NAVBAR / HEADER
+   WHY: Fixed at top, always visible while scrolling.
+        Flex layout: logo left, buttons right.
+================================================ */
+.navbar {
+  position: fixed;            /* Stays at top while scrolling */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;               /* Above everything except modals */
+  background-color: var(--color-bg-white);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.navbar-container {
+  max-width: 1200px;          /* Content doesn't stretch too wide on big screens */
+  margin: 0 auto;             /* Center horizontally */
+  padding: 0 var(--space-xl);
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* Logo LEFT, buttons RIGHT */
+}
+
+/* --- Logo --- */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  text-decoration: none;
+}
+
+.logo-icon {
+  font-size: 1.4rem;
+  color: var(--color-accent);     /* Yellow star */
+  filter: drop-shadow(0 0 6px rgba(245, 197, 24, 0.5));
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+.logo-highlight {
+  color: var(--color-text-dark);  /* "ify" part is dark, "Event" is purple */
+}
+
+/* --- Nav Buttons --- */
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+
+/* ================================================
+   7. HERO SECTION
+   WHY: Two-column layout.
+        Left = text content.
+        Right = decorative floating cards.
+================================================ */
+.hero {
+  min-height: 100vh;            /* Full viewport height */
+  display: flex;
+  align-items: center;
+  padding-top: 68px;            /* Offset for fixed navbar height */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: var(--space-xl);
+  padding-right: var(--space-xl);
+  gap: var(--space-3xl);
+}
+
+/* Left side — text */
+.hero-content {
+  flex: 1;
+  max-width: 580px;
+}
+
+/* Right side — visuals */
+.hero-visual {
+  flex: 1;
+  position: relative;
+  height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Badge above title --- */
+.hero-badge {
+  display: inline-block;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-md);
+  border: 1px solid rgba(108, 43, 217, 0.2);
+}
+
+/* --- Main Heading --- */
+.hero-title {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);  /* Responsive font size */
+  font-weight: 800;
+  color: var(--color-text-dark);
+  line-height: 1.15;
+  margin-bottom: var(--space-md);
+}
+
+/* Gradient highlight on key words */
+.hero-highlight {
+  background: linear-gradient(135deg, var(--color-primary), #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Subtitle --- */
+.hero-subtitle {
+  font-size: 1.05rem;
+  color: var(--color-text-body);
+  line-height: 1.7;
+  margin-bottom: var(--space-xl);
+  max-width: 480px;
+}
+
+/* --- CTA Buttons Row --- */
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;              /* Stack on very small screens */
+  margin-bottom: var(--space-lg);
+}
+
+/* --- Trust note below buttons --- */
+.hero-trust {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.01em;
+}
+
+/* --- Big decorative circle in background --- */
+.hero-circle {
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary-light), #ddd6fe);
+  position: absolute;
+  z-index: 0;
+}
+
+
+/* ================================================
+   8. FLOATING EVENT CARDS
+   WHY: Decorative preview of event cards, layered
+        with absolute positioning over the circle.
+        CSS animation makes them gently float.
+================================================ */
+.floating-card {
+  position: absolute;
+  background: var(--color-bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 1;
+  min-width: 200px;
+  border: 1px solid var(--color-border);
+}
+
+.card-emoji {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 2px;
+}
+
+.card-meta {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* Position each card differently */
+.card-1 {
+  top: 40px;
+  left: 20px;
+  animation: float 4s ease-in-out infinite;
+}
+
+.card-2 {
+  bottom: 60px;
+  left: 0;
+  animation: float 4s ease-in-out infinite 1.5s;  /* Delayed */
+}
+
+.card-3 {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  animation: float 4s ease-in-out infinite 0.8s;  /* Delayed */
+}
+
+/* Floating animation keyframes */
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-12px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Override float for card-3 which has a Y translate already */
+.card-3 {
+  animation: floatMid 4s ease-in-out infinite 0.8s;
+}
+@keyframes floatMid {
+  0%   { transform: translateY(-50%); }
+  50%  { transform: translateY(calc(-50% - 12px)); }
+  100% { transform: translateY(-50%); }
+}
+
+
+/* ================================================
+   9. MODAL OVERLAY
+   WHY: Fixed full-screen dark background.
+        Hidden by default (display:none).
+        JS adds class "active" to show it.
+================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;                   /* top:0 right:0 bottom:0 left:0 in one line */
+  background-color: var(--color-bg-overlay);
+  z-index: 1000;              /* Above everything */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);   /* So modal doesn't touch screen edges on mobile */
+
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+/* When JS adds .active class — overlay becomes visible */
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* ================================================
+   10. MODAL BOX
+   WHY: The white popup card in the center.
+        Slides up when opening.
+================================================ */
+.modal-box {
+  background-color: var(--color-bg-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 440px;           /* Max width on desktop */
+  max-height: 90vh;           /* Max height — scroll inside if very tall */
+  overflow-y: auto;
+  padding: var(--space-xl);
+  position: relative;
+
+  /* Start slightly lower, slide UP when opened */
+  transform: translateY(20px);
+  transition: transform var(--transition-normal);
+}
+
+/* When overlay is active, box slides to normal position */
+.modal-overlay.active .modal-box {
+  transform: translateY(0);
+}
+
+/* Hide scrollbar visually but still scrollable */
+.modal-box::-webkit-scrollbar {
+  width: 4px;
+}
+.modal-box::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-box::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+
+/* ================================================
+   11. MODAL HEADER & FOOTER
+================================================ */
+
+/* Header = title + subtitle + close button */
+.modal-header {
+  position: relative;         /* For absolute-positioned close button */
+  margin-bottom: var(--space-lg);
+  padding-right: var(--space-xl); /* Space so title doesn't overlap close btn */
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  margin-bottom: var(--space-xs);
+}
+
+.modal-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* Close (✕) button — top right corner of modal */
+.modal-close-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-page);
+  color: var(--color-text-body);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+  border: 1px solid var(--color-border);
+}
+
+.modal-close-btn:hover {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+/* Footer = "Switch to other modal" link */
+.modal-footer {
+  margin-top: var(--space-lg);
+  text-align: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+
+/* ================================================
+   12. FORM STYLES
+   WHY: Clean, modern input fields.
+        Highlight border on focus.
+        Red border + message on error.
+================================================ */
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);       /* Space between each form group */
+}
+
+/* Each label + input pair */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* Label above each input */
+.form-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+}
+
+/* Input & Select shared styles */
+.form-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-family: var(--font-family);
+  color: var(--color-text-dark);
+  background-color: var(--color-bg-white);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  outline: none;
+}
+
+/* Focused state — purple highlight */
+.form-input:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(108, 43, 217, 0.12);
+}
+
+/* Placeholder text color */
+.form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* Error state — red border */
+.form-input.input-error {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.10);
+}
+
+/* Select dropdown specific */
+.form-select {
+  appearance: none;             /* Remove default browser arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;          /* Space for custom arrow */
+  cursor: pointer;
+}
+
+/* Wrapper for password input + toggle button */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper .form-input {
+  padding-right: 44px;          /* Space for the eye button */
+}
+
+/* Show/hide password button (👁️) inside input */
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  padding: 4px;
+  line-height: 1;
+  transition: color var(--transition-fast);
+}
+
+.toggle-password:hover {
+  color: var(--color-primary);
+}
+
+/* Field-level error message below input */
+.field-error {
+  font-size: 0.78rem;
+  color: var(--color-error);
+  font-weight: 500;
+  min-height: 16px;             /* Reserve space so layout doesn't jump */
+  display: block;
+}
+
+
+/* ================================================
+   13. ALERT MESSAGES
+   WHY: Full-width banners inside modal.
+        Green for success, red for error.
+================================================ */
+.alert {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: var(--space-sm);
+  border: 1.5px solid transparent;
+  line-height: 1.5;
+}
+
+.alert-success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border-color: #86efac;
+}
+
+.alert-error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: #fca5a5;
+}
+
+
+/* ================================================
+   14. RESPONSIVE — MOBILE STYLES
+   WHY: On small screens (phones), switch to
+        single-column layout.
+================================================ */
+@media (max-width: 768px) {
+
+  /* Navbar — smaller padding on mobile */
+  .navbar-container {
+    padding: 0 var(--space-md);
+  }
+
+  /* Hide full text, show icon only for logo on tiny screens */
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  /* Hero — stack vertically on mobile */
+  .hero {
+    flex-direction: column;
+    text-align: center;
+    padding-top: 100px;
+    padding-bottom: var(--space-3xl);
+    min-height: auto;
+    gap: var(--space-2xl);
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  /* Center the CTA buttons on mobile */
+  .hero-actions {
+    justify-content: center;
+  }
+
+  /* Make hero visual smaller on mobile */
+  .hero-visual {
+    height: 300px;
+    width: 100%;
+  }
+
+  .hero-circle {
+    width: 260px;
+    height: 260px;
+  }
+
+  .floating-card {
+    min-width: 160px;
+    padding: var(--space-sm);
+  }
+
+  .card-1 { top: 10px;  left: 0; }
+  .card-2 { bottom: 10px; left: 0; }
+  .card-3 { right: 0; }
+
+  /* Modal — full width on mobile */
+  .modal-box {
+    padding: var(--space-lg);
+    max-height: 95vh;
+  }
+
+  /* Hero badge — center on mobile */
+  .hero-badge {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Stack nav buttons if very small */
+  .nav-buttons {
+    gap: var(--space-xs);
+  }
+
+  .btn {
+    padding: 8px 14px;
+    font-size: 0.82rem;
+  }
+
+  /* Hero title smaller on tiny phones */
+  .hero-title {
+    font-size: 1.9rem;
+  }
+
+  /* Stack CTA buttons vertically */
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    text-align: center;
+    justify-content: center;
+  }
+}
