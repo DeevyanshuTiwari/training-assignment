@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
 
         User savedUser = userRepository.save(user);
         return new AuthResponse("User registered successfully.", savedUser.getEmail(), savedUser.getPhone(),
-                savedUser.getRole());
+                savedUser.getRole(), null, savedUser.getFullName());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         user.setLastActivityAt(LocalDateTime.now());
         userRepository.save(user);
         String token = jwtService.generateToken(user);
-        return new AuthResponse("Login successful.", user.getEmail(), user.getPhone(), user.getRole(), token);
+        return new AuthResponse("Login successful.", user.getEmail(), user.getPhone(), user.getRole(), token, user.getFullName());
     }
 
     private void validateRegisterRequest(RegisterRequest request) {
