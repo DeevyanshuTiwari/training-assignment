@@ -20,8 +20,12 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // This comes from validated JWT (subject/email) and identifies who booked.
     @Column(nullable = false, length = 120)
     private String userEmail;
+
+    @Column(nullable = false, length = 120)
+    private String userName;
 
     @Column(nullable = false)
     private Integer seatsBooked;
@@ -54,6 +58,14 @@ public class Booking {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Integer getSeatsBooked() {

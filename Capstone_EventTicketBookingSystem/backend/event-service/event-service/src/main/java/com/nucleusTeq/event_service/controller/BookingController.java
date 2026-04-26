@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import com.nucleusTeq.event_service.dto.BookingRequest;
 import com.nucleusTeq.event_service.dto.BookingResponse;
 import com.nucleusTeq.event_service.service.BookingService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/bookings")
 public class BookingController {
@@ -50,6 +52,13 @@ public class BookingController {
             Authentication authentication) {
         String userEmail = authentication.getName();
         List<BookingResponse> response = bookingService.getBookingHistory(userEmail);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<List<BookingResponse>> getBookingsByEventId(
+            @PathVariable Long eventId) {
+        List<BookingResponse> response = bookingService.getBookingsByEventId(eventId);
         return ResponseEntity.ok(response);
     }
 

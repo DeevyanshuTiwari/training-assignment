@@ -56,6 +56,7 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = new Booking();
         booking.setUserEmail(userEmail.trim().toLowerCase());
+        booking.setUserName(request.getUserName());
         booking.setSeatsBooked(request.getSeatsRequested());
         booking.setBookingTime(LocalDateTime.now());
         booking.setBookingStatus("CONFIRMED");
@@ -102,6 +103,15 @@ public class BookingServiceImpl implements BookingService {
         return bookings.stream().map(this::mapToBookingResponse).collect(Collectors.toList());
     }
 
+    @Override
+    public List<BookingResponse> getBookingsByEventId(Long eventId) {
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event ID is required.");
+        }
+        List<Booking> bookings = bookingRepository.findByEventId(eventId);
+        return bookings.stream().map(this::mapToBookingResponse).collect(Collectors.toList());
+    }
+
     private void validateBookingRequest(BookingRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request body is required.");
@@ -111,6 +121,9 @@ public class BookingServiceImpl implements BookingService {
         }
         if (request.getSeatsRequested() == null || request.getSeatsRequested() <= 0) {
             throw new IllegalArgumentException("Seats requested must be greater than 0.");
+        }
+        if (isBlank(request.getUserName())) {
+            throw new IllegalArgumentException("User name is required.");
         }
     }
 
@@ -125,6 +138,7 @@ public class BookingServiceImpl implements BookingService {
                 booking.getEvent().getId(),
                 booking.getEvent().getTitle(),
                 booking.getUserEmail(),
+                booking.getUserName(),
                 booking.getSeatsBooked(),
                 booking.getBookingStatus(),
                 booking.getBookingTime());

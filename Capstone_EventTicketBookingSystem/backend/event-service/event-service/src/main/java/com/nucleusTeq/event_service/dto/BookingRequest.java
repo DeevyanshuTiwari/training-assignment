@@ -4,8 +4,17 @@ public class BookingRequest {
 
     private Long eventId;
     private Integer seatsRequested;
+    private String userName;
 
     public BookingRequest() {
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getEventId() {

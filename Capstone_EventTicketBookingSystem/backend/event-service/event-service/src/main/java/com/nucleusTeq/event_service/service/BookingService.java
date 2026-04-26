@@ -12,4 +12,6 @@ public interface BookingService {
     BookingResponse cancelBooking(String userEmail, Long bookingId);
 
     List<BookingResponse> getBookingHistory(String userEmail);
+
+    List<BookingResponse> getBookingsByEventId(Long eventId);
 }

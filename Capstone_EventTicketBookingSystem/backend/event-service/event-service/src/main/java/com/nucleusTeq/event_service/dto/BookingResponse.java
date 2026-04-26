@@ -8,6 +8,7 @@ public class BookingResponse {
     private Long eventId;
     private String eventTitle;
     private String userEmail;
+    private String userName;
     private Integer seatsBooked;
     private String bookingStatus;
     private LocalDateTime bookingTime;
@@ -15,15 +16,24 @@ public class BookingResponse {
     public BookingResponse() {
     }
 
-    public BookingResponse(Long bookingId, Long eventId, String eventTitle, String userEmail, Integer seatsBooked,
+    public BookingResponse(Long bookingId, Long eventId, String eventTitle, String userEmail, String userName, Integer seatsBooked,
                            String bookingStatus, LocalDateTime bookingTime) {
         this.bookingId = bookingId;
         this.eventId = eventId;
         this.eventTitle = eventTitle;
         this.userEmail = userEmail;
+        this.userName = userName;
         this.seatsBooked = seatsBooked;
         this.bookingStatus = bookingStatus;
         this.bookingTime = bookingTime;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getBookingId() {

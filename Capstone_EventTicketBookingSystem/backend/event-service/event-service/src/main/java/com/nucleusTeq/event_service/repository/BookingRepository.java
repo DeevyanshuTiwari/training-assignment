@@ -10,4 +10,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // Used to show booking history for a specific user.
     List<Booking> findByUserEmailOrderByBookingTimeDesc(String userEmail);
+
+    // Used to show all bookings for a specific event (Organizer view).
+    List<Booking> findByEventId(Long eventId);
 }
