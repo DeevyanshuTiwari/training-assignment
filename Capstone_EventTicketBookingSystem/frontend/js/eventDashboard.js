@@ -3,11 +3,12 @@
 // A. CONFIG & DOM REFERENCES
 // ================================================
 
-const API = 'http://localhost:8082/api/events';
+const API = 'http://localhost:8083/api';
 
 // --- Auth ---
 const token        = localStorage.getItem('authToken');
 const userEmail    = localStorage.getItem('userEmail') || 'Organizer';
+const userName    = localStorage.getItem('userName') || 'Organizer';
 
 // --- Navbar ---
 const organizerName = document.getElementById('organizerName');
@@ -105,7 +106,7 @@ if (!token) {
 
 // Set organizer name in navbar
 // Show first letter as avatar, rest as name
-const displayName = userEmail.split('@')[0];
+const displayName = userName;
 if (organizerName) organizerName.textContent = displayName;
 if (userAvatar)    userAvatar.textContent    = displayName.charAt(0).toUpperCase();
 
@@ -275,7 +276,9 @@ async function apiFetch(endpoint, options = {}) {
 /** Filters events array by status. */
 function filterEvents(events, filter) {
   if (filter === 'ALL') return events;
-  return events.filter(e => e.status === filter);
+  if (filter === 'ACTIVE') return events.filter(e => !e.cancelled);
+  if (filter === 'CANCELLED') return events.filter(e => e.cancelled);
+  return events;
 }
 
 /**
@@ -297,7 +300,7 @@ function formatDate(dateStr) {
  * @returns {string} HTML for one event card.
  */
 function buildEventCard(event) {
-  const isActive    = event.status === 'ACTIVE';
+  const isActive    = event.cancelled === false;
   const badgeClass  = isActive ? 'status-active' : 'status-cancelled';
   const badgeText   = isActive ? 'Active' : 'Cancelled';
   const totalSeats  = event.totalSeats || 0;
@@ -324,7 +327,7 @@ function buildEventCard(event) {
         </div>
         <div class="event-meta-row">
           <span class="event-meta-icon">💰</span>
-          <span>₹${price}</span>
+          <span>₹${event.price}</span>
         </div>
       </div>
 
@@ -375,8 +378,8 @@ function renderEventCards(container, events) {
 /** Updates the 4 summary stat counters. */
 function updateStats(events) {
   const total     = events.length;
-  const active    = events.filter(e => e.status === 'ACTIVE').length;
-  const cancelled = events.filter(e => e.status === 'CANCELLED').length;
+  const active    = events.filter(e => !e.cancelled).length;
+  const cancelled = events.filter(e => e.cancelled).length;
   // Total bookings = sum of booked seats across all events
   const bookings  = events.reduce((sum, e) => {
     const booked = (e.totalSeats || 0) - (e.availableSeats ?? e.totalSeats ?? 0);
@@ -392,19 +395,13 @@ function updateStats(events) {
 /** Fetches all events from GET /api/events/upcoming and renders them. */
 async function loadEvents() {
   try {
-    // Your backend: GET /api/events/upcoming
-    //const res = await apiFetch('/upcoming');
-    const res = await fetch("http://localhost:8082/api/events/upcoming", {
-  method: 'GET',
-  headers: {
-    'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-    'Content-Type': 'application/json'
-  }
-});
+    // Your backend: GET /api/events (Organizer sees all, customer sees upcoming)
+    const res = await apiFetch('/events');
+
     if (!res.ok) {
       if (res.status === 401) {
       console.log("Unauthorized access - token may be invalid or expired. Redirecting to login.");
-       logout(); return;
+       //logout(); return;
         }
       throw new Error('Failed to load events');
     }
@@ -490,7 +487,7 @@ createEventForm.addEventListener('submit', async (e) => {
     eventDateTime:     createDate.value,
     venue:        createVenue.value.trim(),
     totalSeats:   parseInt(createSeats.value),
-    //ticketPrice:  parseFloat(createPrice.value)
+    price:  parseFloat(createPrice.value)
   };
 
   try {
@@ -499,13 +496,8 @@ createEventForm.addEventListener('submit', async (e) => {
     //   method: 'POST',
     //   body: JSON.stringify(body)
     // });
-    console.log("Sending event body:", body);
-    const res = await fetch("http://localhost:8082/api/events", {
+    const res = await apiFetch('/events', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + localStorage.getItem('authToken'),
-        'Content-Type': 'application/json'
-      },
       body: JSON.stringify(body)
     });
 
@@ -529,7 +521,7 @@ createEventForm.addEventListener('submit', async (e) => {
     await loadEvents(); // Refresh list
 
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     showAlert(createModalAlert, 'error', err.message);
   } finally {
     createEventSubmitBtn.disabled    = false;
@@ -595,12 +587,12 @@ editEventForm.addEventListener('submit', async (e) => {
     eventDateTime:    editDate.value,
     venue:       editVenue.value.trim(),
     totalSeats:  parseInt(editSeats.value),
-    //ticketPrice: parseFloat(editPrice.value)
+    price: parseFloat(editPrice.value)
   };
 
   try {
     // Your backend: PUT /api/events/{eventId}
-    const res = await apiFetch(`/${id}`, {
+    const res = await apiFetch(`/events/${id}`, {
       method: 'PUT',
       body: JSON.stringify(body)
     });
@@ -644,7 +636,7 @@ cancelConfirmYes.addEventListener('click', async () => {
 
   try {
     // Your backend: PUT /api/events/{eventId}/cancel  (NOT DELETE!)
-    const res = await apiFetch(`/${id}/cancel`, { method: 'PUT' });
+    const res = await apiFetch(`/events/${id}/cancel`, { method: 'PUT' });
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -685,7 +677,7 @@ window.loadBookings = async function(eventId, eventName) {
   try {
     // NOTE: Share your Bookings controller so we can set the exact URL.
     // Placeholder — update this path to match your BookingController endpoint.
-    const res = await apiFetch(`/${eventId}/bookings`);
+    const res = await apiFetch(`/bookings/event/${eventId}`);
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -704,19 +696,20 @@ window.loadBookings = async function(eventId, eventName) {
     bookingsTableBody.innerHTML = bookings.map((b, i) => `
       <tr>
         <td>${i + 1}</td>
-        <td>${escapeHtml(b.userName || b.name || 'N/A')}</td>
-        <td>${escapeHtml(b.email || 'N/A')}</td>
-        <td style="text-align:center;">${b.ticketCount || b.numberOfTickets || 1}</td>
-        <td>${formatDate(b.bookingTime || b.createdAt)}</td>
+        <td>${escapeHtml(b.userName || 'N/A')}</td>
+        <td>${escapeHtml(b.userEmail)}</td>
+        <td style="text-align:center;">${b.seatsBooked}</td>
+        <td>${formatDate(b.bookingTime)}</td>
         <td>
-          <span class="status-badge ${b.status === 'CONFIRMED' ? 'status-active' : 'status-cancelled'}">
-            ${b.status || 'CONFIRMED'}
+          <span class="status-badge ${b.bookingStatus === 'CONFIRMED' ? 'status-active' : 'status-cancelled'}">
+            ${b.bookingStatus || 'CONFIRMED'}
           </span>
         </td>
       </tr>
     `).join('');
 
   } catch (err) {
+    console.log(err);
     bookingsTableBody.innerHTML = '';
     bookingsTable.style.display = 'none';
     showAlert(bookingsAlert, 'error', err.message);
@@ -730,6 +723,9 @@ window.loadBookings = async function(eventId, eventName) {
 function logout() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('userEmail');
+  localStorage.removeItem('token');
+  localStorage.removeItem('userName');
+  localStorage.removeItem('userRole');
   window.location.href = 'index.html';
 }
 

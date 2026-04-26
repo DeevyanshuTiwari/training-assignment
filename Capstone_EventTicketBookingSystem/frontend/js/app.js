@@ -17,7 +17,7 @@
 // WHY: Keep the API URL in ONE place.
 //      If your backend URL changes, update only here.
 // ------------------------------------------------
-const API_BASE_URL = 'http://localhost:8080/api/auth';
+const API_BASE_URL = 'http://localhost:8082/api/auth';
 
 
 // ------------------------------------------------
@@ -391,18 +391,28 @@ loginForm.addEventListener('submit', async (e) => {
       throw new Error('Login succeeded but no token was returned. Contact support.');
     }
 
-    // Save token and email to localStorage
-    // WHY: We'll use this token for future authenticated API calls
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userEmail', email);
+    // Save token, email, role, and name to localStorage.
+    // customer.js reads 'token'; eventDashboard.js reads 'authToken'.
+    // We save both keys so both dashboards work without changes.
+    localStorage.setItem('token',     token);       // used by customer.js
+    localStorage.setItem('authToken', token);       // used by eventDashboard.js
+    localStorage.setItem('userEmail', data.email || email);
+    localStorage.setItem('userRole',  data.role  || '');
+    localStorage.setItem('userName',  data.fullName || data.email || email);
 
     // Show success feedback briefly before redirect
     loginSubmitBtn.textContent = '✓ Success! Redirecting...';
 
-    // Redirect to dashboard after short delay
-    // WHY: Small delay lets user see the success state
+    // Role-based redirect:
+    //   CUSTOMER  → customer-dashboard.html
+    //   ORGANIZER → eventDashboard.html
+    const role = (data.role || '').toUpperCase();
     setTimeout(() => {
-      window.location.href = 'eventDashboard.html';
+      if (role === 'CUSTOMER') {
+        window.location.href = 'customer-dashboard.html';
+      } else {
+        window.location.href = 'eventDashboard.html';
+      }
     }, 900);
 
   } catch (error) {
@@ -512,9 +522,16 @@ registerForm.addEventListener('submit', async (e) => {
 //      send them straight to the dashboard.
 // ------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-  const existingToken = localStorage.getItem('authToken');
+  // If a token already exists, skip the landing page and go straight to the
+  // correct dashboard based on saved role.
+  const existingToken = localStorage.getItem('token') || localStorage.getItem('authToken');
   if (existingToken) {
-    window.location.href = 'eventDashboard.html';
+    const role = (localStorage.getItem('userRole') || '').toUpperCase();
+    if (role === 'CUSTOMER') {
+      window.location.href = 'customer-dashboard.html';
+    } else {
+      window.location.href = 'eventDashboard.html';
+    }
   }
 });
 
