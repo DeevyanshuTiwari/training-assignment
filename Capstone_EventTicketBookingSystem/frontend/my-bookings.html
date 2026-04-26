@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Bookings — Eventify</title>
+    <link rel="stylesheet" href="css/customer.css" />
+</head>
+
+<body>
+
+<!-- Atmospheric background -->
+<div class="noise-overlay"></div>
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+
+<!-- ================================================
+     NAVBAR
+================================================ -->
+<header class="c-navbar">
+    <div class="c-navbar-inner">
+        <a href="customer-dashboard.html" class="c-logo">
+            <span class="c-logo-icon">✦</span>
+            <span class="c-logo-text">Event<span class="c-logo-accent">ify</span></span>
+        </a>
+        <nav class="c-nav-links">
+            <a href="customer-dashboard.html" class="c-nav-link">🏠 Home</a>
+            <a href="my-bookings.html" class="c-nav-link active">🎟️ My Bookings</a>
+        </nav>
+        <div class="c-nav-right">
+            <div class="c-user-chip">
+                <div class="c-user-avatar" id="navAvatar">U</div>
+                <span class="c-user-name" id="navUserName">Customer</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="logoutBtn">🚪 Logout</button>
+        </div>
+    </div>
+</header>
+
+
+<!-- ================================================
+     MAIN CONTENT
+================================================ -->
+<main class="c-page">
+    <div class="c-container">
+
+        <!-- Page heading -->
+        <div class="c-section-header">
+            <h1 class="c-section-title">🎟️ My Bookings</h1>
+            <p class="c-section-sub">Manage all your event bookings in one place</p>
+        </div>
+
+        <!-- Alert box -->
+        <div class="c-alert" id="bookingsAlert"></div>
+
+        <!-- ==========================================
+             FILTER TABS
+             JS filters the already-fetched bookings client-side
+        ========================================== -->
+        <div class="c-tabs">
+            <!-- data-filter tells JS which filter to apply -->
+            <button class="c-tab active" data-filter="ALL" id="tabAll">All</button>
+            <button class="c-tab" data-filter="UPCOMING" id="tabUpcoming">📅 Upcoming</button>
+            <button class="c-tab" data-filter="PAST" id="tabPast">📁 Past</button>
+            <button class="c-tab" data-filter="CANCELLED" id="tabCancelled">🚫 Cancelled</button>
+        </div>
+
+        <!-- ==========================================
+             BOOKINGS GRID
+             JS renders booking cards here
+        ========================================== -->
+        <div class="c-bookings-grid" id="bookingsGrid">
+
+            <!-- Skeleton loaders shown while fetching -->
+            <div class="c-skeleton-card" style="height:200px;">
+                <div class="c-skeleton-inner">
+                    <div class="c-skel c-skel-title"></div>
+                    <div class="c-skel c-skel-line w60"></div>
+                    <div class="c-skel c-skel-line w40"></div>
+                </div>
+            </div>
+            <div class="c-skeleton-card" style="height:200px;">
+                <div class="c-skeleton-inner">
+                    <div class="c-skel c-skel-title"></div>
+                    <div class="c-skel c-skel-line w60"></div>
+                    <div class="c-skel c-skel-line w40"></div>
+                </div>
+            </div>
+
+        </div><!-- /bookingsGrid -->
+
+    </div><!-- /c-container -->
+</main>
+
+
+<!-- ================================================
+     CANCEL CONFIRM MODAL
+     "Are you sure?" before calling DELETE /api/bookings/{id}
+================================================ -->
+<div class="c-overlay" id="cancelModal" role="dialog" aria-modal="true">
+    <div class="c-overlay-box">
+        <p style="font-size:2rem; margin-bottom:12px;">⚠️</p>
+        <p class="c-overlay-title">Cancel this booking?</p>
+        <p class="c-overlay-sub" id="cancelModalEventName">This action cannot be undone.</p>
+        <!-- Hidden: stores the bookingId to cancel -->
+        <input type="hidden" id="cancelBookingId" />
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="btn btn-danger" id="confirmCancelYes">Yes, Cancel</button>
+            <button class="btn btn-ghost" id="confirmCancelNo">No, Keep It</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- JS -->
+<script src="js/customer.js"></script>
+
+</body>
+</html>
