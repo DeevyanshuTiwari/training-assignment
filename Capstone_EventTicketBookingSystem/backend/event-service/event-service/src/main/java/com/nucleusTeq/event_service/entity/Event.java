@@ -37,11 +37,14 @@ public class Event {
     @Column(nullable = false)
     private Integer totalSeats;
 
-    @Column(nullable = false)
-    private Integer availableSeats;
+    @Column(nullable = false, columnDefinition = "double precision default 0")
+    private Double price = 0.0;
 
-    @Column(nullable = false)
-    private Boolean cancelled;
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer availableSeats = 0;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean cancelled = false;
 
     // One event can have many bookings.
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -96,6 +99,14 @@ public class Event {
 
     public void setTotalSeats(Integer totalSeats) {
         this.totalSeats = totalSeats;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public Integer getAvailableSeats() {

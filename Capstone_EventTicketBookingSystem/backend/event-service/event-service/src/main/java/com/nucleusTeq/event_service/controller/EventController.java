@@ -35,9 +35,21 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @GetMapping
+    public ResponseEntity<List<EventResponse>> getAllEvents() {
+        List<EventResponse> response = eventService.getAllEvents();
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/upcoming")
     public ResponseEntity<List<EventResponse>> getUpcomingEvents() {
         List<EventResponse> response = eventService.getUpcomingEvents();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventResponse> getEventById(@PathVariable Long eventId) {
+        EventResponse response = eventService.getEventById(eventId);
         return ResponseEntity.ok(response);
     }
 

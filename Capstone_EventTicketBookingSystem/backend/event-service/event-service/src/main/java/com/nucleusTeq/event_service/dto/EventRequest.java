@@ -9,6 +9,7 @@ public class EventRequest {
     private String venue;
     private LocalDateTime eventDateTime;
     private Integer totalSeats;
+    private Double price;
 
     public EventRequest() {
     }
@@ -51,5 +52,13 @@ public class EventRequest {
 
     public void setTotalSeats(Integer totalSeats) {
         this.totalSeats = totalSeats;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

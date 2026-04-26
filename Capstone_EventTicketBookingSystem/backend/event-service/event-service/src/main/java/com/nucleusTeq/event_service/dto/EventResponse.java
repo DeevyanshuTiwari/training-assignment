@@ -12,12 +12,13 @@ public class EventResponse {
     private Integer totalSeats;
     private Integer availableSeats;
     private Boolean cancelled;
+    private Double price;
 
     public EventResponse() {
     }
 
     public EventResponse(Long id, String title, String description, String venue, LocalDateTime eventDateTime,
-                         Integer totalSeats, Integer availableSeats, Boolean cancelled) {
+                         Integer totalSeats, Integer availableSeats, Boolean cancelled, Double price) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -26,6 +27,7 @@ public class EventResponse {
         this.totalSeats = totalSeats;
         this.availableSeats = availableSeats;
         this.cancelled = cancelled;
+        this.price = price;
     }
 
     public Long getId() {
@@ -90,5 +92,13 @@ public class EventResponse {
 
     public void setCancelled(Boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

@@ -34,6 +34,7 @@ public class EventServiceImpl implements EventService {
         event.setEventDateTime(request.getEventDateTime());
         event.setTotalSeats(request.getTotalSeats());
         event.setAvailableSeats(request.getTotalSeats());
+        event.setPrice(request.getPrice());
         event.setCancelled(false);
 
         Event savedEvent = eventRepository.save(event);
@@ -45,6 +46,19 @@ public class EventServiceImpl implements EventService {
         List<Event> upcomingEvents = eventRepository
                 .findByCancelledFalseAndEventDateTimeAfterOrderByEventDateTimeAsc(LocalDateTime.now());
         return upcomingEvents.stream().map(this::mapToEventResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventResponse> getAllEvents() {
+        List<Event> events = eventRepository.findAll();
+        return events.stream().map(this::mapToEventResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventResponse getEventById(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+        return mapToEventResponse(event);
     }
 
     @Override
@@ -74,6 +88,7 @@ public class EventServiceImpl implements EventService {
         event.setEventDateTime(request.getEventDateTime());
         event.setTotalSeats(request.getTotalSeats());
         event.setAvailableSeats(request.getTotalSeats() - alreadyBookedSeats);
+        event.setPrice(request.getPrice());
 
         Event updatedEvent = eventRepository.save(event);
         return mapToEventResponse(updatedEvent);
@@ -112,6 +127,9 @@ public class EventServiceImpl implements EventService {
         if (request.getTotalSeats() == null || request.getTotalSeats() <= 0) {
             throw new IllegalArgumentException("Total seats must be greater than 0.");
         }
+        if (request.getPrice() == null || request.getPrice() < 0) {
+            throw new IllegalArgumentException("Price must be 0 or greater.");
+        }
     }
 
     private EventResponse mapToEventResponse(Event event) {
@@ -123,7 +141,8 @@ public class EventServiceImpl implements EventService {
                 event.getEventDateTime(),
                 event.getTotalSeats(),
                 event.getAvailableSeats(),
-                event.getCancelled());
+                event.getCancelled(),
+                event.getPrice());
     }
 
     private boolean isBlank(String value) {
