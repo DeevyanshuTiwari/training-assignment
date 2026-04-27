@@ -135,6 +135,52 @@
     </div><!-- /c-container -->
 </main>
 
+<!-- ================================================
+     PROFILE DRAWER (Side Panel)
+================================================ -->
+<div class="c-profile-overlay" id="profileOverlay"></div>
+
+<aside class="c-profile-drawer" id="profileDrawer">
+
+    <div class="c-drawer-header">
+        <h2 class="c-drawer-title">My Profile</h2>
+        <button class="c-close-btn" id="closeDrawerBtn" title="Close">✕</button>
+    </div>
+
+    <div class="c-drawer-body">
+        <!-- We reuse your existing avatar styling concept here -->
+        <div class="c-profile-avatar-large" id="drawerAvatar">M</div>
+
+        <form id="profileForm" class="c-profile-form">
+            <!-- Reusing your existing .c-alert class for messages -->
+            <div class="c-alert" id="profileAlert"></div>
+
+            <div class="c-form-group">
+                <label class="c-form-label" for="profileName">Full Name</label>
+                <!-- Reusing your .c-filter-input for consistency -->
+                <input type="text" id="profileName" class="c-filter-input w-full" required />
+            </div>
+
+            <div class="c-form-group">
+                <label class="c-form-label" for="profileEmail">Email Address</label>
+                <input type="email" id="profileEmail" class="c-filter-input w-full" required />
+            </div>
+
+            <div class="c-form-group">
+                <label class="c-form-label" for="profilePhone">Phone Number</label>
+                <input type="tel" id="profilePhone" class="c-filter-input w-full" placeholder="e.g. 9876543210" />
+            </div>
+
+            <div class="c-drawer-actions">
+                <!-- Reusing your existing .btn classes -->
+                <button type="submit" class="btn btn-primary btn-full">Update Profile</button>
+                <button type="button" class="btn btn-danger btn-full" id="drawerLogoutBtn">🚪 Logout</button>
+            </div>
+        </form>
+    </div>
+
+</aside>
+
 
 <!-- JS -->
 <script src="js/customer.js"></script>
