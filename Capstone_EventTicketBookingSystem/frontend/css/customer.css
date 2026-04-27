@@ -217,3 +217,115 @@ body{background:var(--bg);color:var(--fg);min-height:100vh;overflow-x:hidden}
   .c-detail-actions{flex-direction:column}
   .c-detail-actions .btn{width:100%;justify-content:center}
 }
+
+/* ── Profile Drawer ── */
+.c-profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200; /* Above navbar */
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--tr-norm);
+}
+.c-profile-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.c-profile-drawer {
+  position: fixed;
+  top: 0;
+  right: 0; /* Sliding from right */
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 201; /* Above overlay */
+  transform: translateX(100%);
+  transition: transform var(--tr-norm);
+  display: flex;
+  flex-direction: column;
+}
+.c-profile-drawer.show {
+  transform: translateX(0);
+}
+
+.c-drawer-header {
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.c-drawer-title {
+  font-family: var(--font-d);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+.c-close-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--r-md);
+  transition: all var(--tr-fast);
+}
+.c-close-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fg);
+}
+
+.c-drawer-body {
+  padding: 28px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.c-profile-avatar-large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 2.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 32px auto;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+}
+
+.c-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.c-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.c-form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.w-full {
+  width: 100%;
+}
+
+.c-drawer-actions {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
