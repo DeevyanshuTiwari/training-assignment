@@ -27,6 +27,9 @@ public class Booking {
     @Column(nullable = false, length = 120)
     private String userName;
 
+    @Column(length = 20)
+    private String phone;
+
     @Column(nullable = false)
     private Integer seatsBooked;
 
@@ -66,6 +69,14 @@ public class Booking {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Integer getSeatsBooked() {
