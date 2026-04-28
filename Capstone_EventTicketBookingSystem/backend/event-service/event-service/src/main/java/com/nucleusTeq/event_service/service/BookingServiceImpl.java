@@ -84,6 +84,10 @@ public class BookingServiceImpl implements BookingService {
         if (!booking.getEvent().getEventDateTime().isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Cannot cancel booking after event start time.");
         }
+        LocalDateTime cancelDeadline = booking.getEvent().getEventDateTime().minusHours(3);
+        if (LocalDateTime.now().isAfter(cancelDeadline)) {
+            throw new IllegalArgumentException("Cancellations are only allowed up to 3 hours before the event starts.");
+        }
 
         booking.setBookingStatus("CANCELLED");
         Event event = booking.getEvent();
