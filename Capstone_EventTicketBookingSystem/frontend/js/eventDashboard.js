@@ -1,744 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
 
-// ================================================
-// A. CONFIG & DOM REFERENCES
-// ================================================
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organizer Dashboard — Eventify</title>
+  <!-- Step 2: Dashboard CSS -->
+  <link rel="stylesheet" href="css/eventDashboard.css" />
+</head>
 
-const API = 'http://localhost:8082/api';
+<body>
 
-// --- Auth ---
-const token        = localStorage.getItem('authToken');
-const userEmail    = localStorage.getItem('userEmail') || 'Organizer';
-const userName    = localStorage.getItem('userName') || 'Organizer';
+  <!-- Atmospheric background -->
+  <div class="noise-overlay" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.015;background-image:url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');background-repeat:repeat;background-size:128px 128px"></div>
 
-// --- Navbar ---
-const organizerName = document.getElementById('organizerName');
-const userAvatar    = document.getElementById('userAvatar');
-const navLogoutBtn  = document.getElementById('navLogoutBtn');
+  <!-- ================================================
+       NAVBAR — Fixed top bar
+       Logo | Organizer name | Logout button
+  ================================================ -->
+  <header class="dash-navbar">
+    <div class="dash-navbar-inner">
 
-// --- Sidebar buttons ---
-const sidebarItems      = document.querySelectorAll('.sidebar-item[data-target]');
-const navCreateEvent    = document.getElementById('navCreateEvent');
-const sidebarLogoutBtn  = document.getElementById('sidebarLogoutBtn');
-
-// --- Section containers ---
-const allSections = document.querySelectorAll('.dash-section');
-
-// --- Stat counters ---
-const statTotal     = document.getElementById('statTotal');
-const statActive    = document.getElementById('statActive');
-const statCancelled = document.getElementById('statCancelled');
-const statBookings  = document.getElementById('statBookings');
-
-// --- Event grids ---
-const recentEventsGrid = document.getElementById('recentEventsGrid');
-const allEventsGrid    = document.getElementById('allEventsGrid');
-const emptyState       = document.getElementById('emptyState');
-
-// --- Filter buttons ---
-const filterBtns = document.querySelectorAll('.filter-btn');
-
-// --- Create buttons (multiple entry points) ---
-const overviewCreateBtn = document.getElementById('overviewCreateBtn');
-const eventsCreateBtn   = document.getElementById('eventsCreateBtn');
-const emptyCreateBtn    = document.getElementById('emptyCreateBtn');
-const viewAllBtn        = document.getElementById('viewAllBtn');
-const backToEventsBtn   = document.getElementById('backToEventsBtn');
-
-// --- Alerts ---
-const eventsAlert   = document.getElementById('eventsAlert');
-const bookingsAlert = document.getElementById('bookingsAlert');
-
-// --- Bookings section ---
-const bookingsEventName  = document.getElementById('bookingsEventName');
-const bookingsTableBody  = document.getElementById('bookingsTableBody');
-const noBookings         = document.getElementById('noBookings');
-const bookingsTable      = document.getElementById('bookingsTable');
-
-// --- Create Modal ---
-const createEventModal    = document.getElementById('createEventModal');
-const closeCreateModal    = document.getElementById('closeCreateModal');
-const createEventForm     = document.getElementById('createEventForm');
-const createModalAlert    = document.getElementById('createModalAlert');
-const createEventSubmitBtn = document.getElementById('createEventSubmitBtn');
-const createName  = document.getElementById('createName');
-const createDesc  = document.getElementById('createDesc');
-const createDate  = document.getElementById('createDate');
-const createVenue = document.getElementById('createVenue');
-const createSeats = document.getElementById('createSeats');
-const createPrice = document.getElementById('createPrice');
-
-// --- Edit Modal ---
-const editEventModal     = document.getElementById('editEventModal');
-const closeEditModal     = document.getElementById('closeEditModal');
-const editEventForm      = document.getElementById('editEventForm');
-const editModalAlert     = document.getElementById('editModalAlert');
-const editEventSubmitBtn = document.getElementById('editEventSubmitBtn');
-const editEventId = document.getElementById('editEventId');
-const editName    = document.getElementById('editName');
-const editDesc    = document.getElementById('editDesc');
-const editDate    = document.getElementById('editDate');
-const editVenue   = document.getElementById('editVenue');
-const editSeats   = document.getElementById('editSeats');
-const editPrice   = document.getElementById('editPrice');
-
-// --- Cancel Confirm Modal ---
-const cancelConfirmModal     = document.getElementById('cancelConfirmModal');
-const closeCancelModal       = document.getElementById('closeCancelModal');
-const cancelConfirmEventName = document.getElementById('cancelConfirmEventName');
-const cancelEventId          = document.getElementById('cancelEventId');
-const cancelConfirmYes       = document.getElementById('cancelConfirmYes');
-const cancelConfirmNo        = document.getElementById('cancelConfirmNo');
-
-// State: which filter is active
-let currentFilter = 'ALL';
-// State: all events fetched from backend
-let allEvents = [];
-
-
-// ================================================
-// B. AUTH GUARD
-// WHY: Dashboard is protected. If no JWT token
-//      exists in localStorage, send user to login.
-// ================================================
-if (!token) {
-  window.location.href = 'index.html';
-}
-
-// Set organizer name in navbar
-// Show first letter as avatar, rest as name
-const displayName = userName;
-if (organizerName) organizerName.textContent = displayName;
-if (userAvatar)    userAvatar.textContent    = displayName.charAt(0).toUpperCase();
-
-
-// ================================================
-// C. SIDEBAR NAVIGATION
-// WHY: Instead of separate pages, we show/hide
-//      sections using JS. Faster and simpler.
-// ================================================
-
-/**
- * Shows one section, hides all others.
- * @param {string} targetId - The id of the section to show.
- */
-function showSection(targetId) {
-  allSections.forEach(sec => sec.classList.remove('active-section'));
-  const target = document.getElementById(targetId);
-  if (target) target.classList.add('active-section');
-
-  // Update active sidebar item highlight
-  sidebarItems.forEach(item => {
-    item.classList.toggle('active', item.dataset.target === targetId);
-  });
-}
-
-// Wire up sidebar nav buttons
-sidebarItems.forEach(item => {
-  item.addEventListener('click', () => showSection(item.dataset.target));
-});
-
-// "View All" link on overview → go to My Events
-viewAllBtn.addEventListener('click', () => showSection('section-events'));
-
-// "Back to Events" in bookings section
-backToEventsBtn.addEventListener('click', () => showSection('section-events'));
-
-// Sidebar "Create Event" → open modal
-navCreateEvent.addEventListener('click', () => openModal(createEventModal));
-
-// All "+ Create Event" buttons
-overviewCreateBtn.addEventListener('click', () => openModal(createEventModal));
-eventsCreateBtn.addEventListener('click',   () => openModal(createEventModal));
-emptyCreateBtn.addEventListener('click',    () => openModal(createEventModal));
-
-// Filter bar
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.dataset.filter;
-    renderEventCards(allEventsGrid, filterEvents(allEvents, currentFilter));
-  });
-});
-
-
-// ================================================
-// D. MODAL HELPERS
-// ================================================
-function openModal(modal) {
-  modal.classList.add('active');
-  document.body.classList.add('modal-open');
-}
-
-function closeModal(modal) {
-  modal.classList.remove('active');
-  document.body.classList.remove('modal-open');
-  // Reset form inside
-  const form = modal.querySelector('form');
-  if (form) form.reset();
-  // Clear errors
-  modal.querySelectorAll('.field-error').forEach(el => el.textContent = '');
-  modal.querySelectorAll('.form-input').forEach(el => el.classList.remove('input-error'));
-  // Hide alert
-  const alertEl = modal.querySelector('.alert');
-  if (alertEl) { alertEl.style.display = 'none'; alertEl.textContent = ''; }
-}
-
-// Close buttons
-closeCreateModal.addEventListener('click',  () => closeModal(createEventModal));
-closeEditModal.addEventListener('click',    () => closeModal(editEventModal));
-closeCancelModal.addEventListener('click',  () => closeModal(cancelConfirmModal));
-cancelConfirmNo.addEventListener('click',   () => closeModal(cancelConfirmModal));
-
-// Close on overlay click
-[createEventModal, editEventModal, cancelConfirmModal].forEach(modal => {
-  modal.addEventListener('click', e => { if (e.target === modal) closeModal(modal); });
-});
-
-// Close on Escape key
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    [createEventModal, editEventModal, cancelConfirmModal].forEach(m => {
-      if (m.classList.contains('active')) closeModal(m);
-    });
-  }
-});
-
-
-// ================================================
-// E. ALERT HELPERS
-// ================================================
-function showAlert(el, type, message) {
-  el.className = 'alert alert-' + type;
-  el.textContent = (type === 'success' ? '✅ ' : '⚠️ ') + message;
-  el.style.display = 'block';
-  // Auto-hide success after 4s
-  if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 4000);
-}
-
-function showFieldError(inputEl, errorElId, message) {
-  inputEl.classList.add('input-error');
-  document.getElementById(errorElId).textContent = message;
-}
-
-function clearFieldError(inputEl, errorElId) {
-  inputEl.classList.remove('input-error');
-  document.getElementById(errorElId).textContent = '';
-}
-
-// Live clear on typing
-[
-  [createName,  'createNameError'],
-  [createDesc,  'createDescError'],
-  [createDate,  'createDateError'],
-  [createVenue, 'createVenueError'],
-  [createSeats, 'createSeatsError'],
-  [createPrice, 'createPriceError'],
-  [editName,    'editNameError'],
-  [editDesc,    'editDescError'],
-  [editDate,    'editDateError'],
-  [editVenue,   'editVenueError'],
-  [editSeats,   'editSeatsError'],
-  [editPrice,   'editPriceError'],
-].forEach(([el, errId]) => {
-  el.addEventListener('input', () => clearFieldError(el, errId));
-});
-
-
-// ================================================
-// F. API HELPER
-// WHY: All API calls need the same JWT header.
-//      One helper prevents repetition.
-// ================================================
-
-/**
- * Wrapper around fetch() that adds JWT auth header.
- * @param {string} endpoint  - API path e.g. '/events'
- * @param {object} options   - fetch options (method, body, etc.)
- * @returns {Promise<Response>}
- */
-async function apiFetch(endpoint, options = {}) {
-  const defaultHeaders = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
-  return fetch(`${API}${endpoint}`, {
-    ...options,
-    headers: { ...defaultHeaders, ...(options.headers || {}) }
-  });
-}
-
-
-// ================================================
-// G. LOAD & RENDER EVENTS
-// ================================================
-
-/** Filters events array by status. */
-function filterEvents(events, filter) {
-  if (filter === 'ALL') return events;
-  if (filter === 'ACTIVE') return events.filter(e => !e.cancelled);
-  if (filter === 'CANCELLED') return events.filter(e => e.cancelled);
-  return events;
-}
-
-/**
- * Formats an ISO date string to a readable format.
- * e.g. "2026-05-25T19:00" → "25 May 2026 · 7:00 PM"
- */
-function formatDate(dateStr) {
-  if (!dateStr) return 'N/A';
-  const d = new Date(dateStr);
-  return d.toLocaleString('en-IN', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit', hour12: true
-  });
-}
-
-/**
- * Builds a single event card HTML string.
- * @param {object} event - The event object from backend.
- * @returns {string} HTML for one event card.
- */
-function buildEventCard(event) {
-  const isActive    = event.cancelled === false;
-  const badgeClass  = isActive ? 'status-active' : 'status-cancelled';
-  const badgeText   = isActive ? 'Active' : 'Cancelled';
-  const totalSeats  = event.totalSeats || 0;
-  const availSeats  = event.availableSeats ?? totalSeats;
-  const bookedSeats = totalSeats - availSeats;
-  const fillPct     = totalSeats > 0 ? Math.round((bookedSeats / totalSeats) * 100) : 0;
-  const price       = event.ticketPrice ?? event.price ?? 'N/A';
-
-  return `
-    <div class="event-card" data-id="${event.id}">
-      <div class="event-card-top">
-        <p class="event-name">${escapeHtml(event.title || event.eventName || 'Unnamed Event')}</p>
-        <span class="status-badge ${badgeClass}">${badgeText}</span>
+      <!-- Logo (left) -->
+      <div class="dash-logo">
+        <span class="dash-logo-icon">✦</span>
+        <span class="dash-logo-text">Event<span class="dash-logo-accent">ify</span></span>
       </div>
 
-      <div class="event-meta">
-        <div class="event-meta-row">
-          <span class="event-meta-icon">📅</span>
-          <span>${formatDate(event.eventDateTime || event.date)}</span>
+      <!-- Right side: organizer name + logout -->
+      <div class="dash-navbar-right">
+        <!-- Organizer name filled by JS from localStorage -->
+        <div class="dash-user-info">
+          <span class="dash-user-avatar" id="userAvatar">O</span>
+          <span class="dash-user-name" id="organizerName">Organizer</span>
         </div>
-        <div class="event-meta-row">
-          <span class="event-meta-icon">📍</span>
-          <span>${escapeHtml(event.venue || 'N/A')}</span>
-        </div>
-        <div class="event-meta-row">
-          <span class="event-meta-icon">💰</span>
-          <span>₹${event.price}</span>
-        </div>
-      </div>
-
-      <div class="seats-info">
-        <div class="seats-bar-bg">
-          <div class="seats-bar-fill" style="width: ${fillPct}%"></div>
-        </div>
-        <p class="seats-label">
-          ${availSeats} of ${totalSeats} seats available (${bookedSeats} booked)
-        </p>
-      </div>
-
-      <div class="event-card-actions">
-        <button
-          class="btn btn-outline btn-sm"
-          onclick="openEditModal(${event.id})">
-          ✏️ Edit
-        </button>
-        ${isActive ? `
-        <button
-          class="btn btn-danger btn-sm"
-          onclick="openCancelModal(${event.id}, '${escapeHtml(event.title || event.eventName || '')}')">
-          ❌ Cancel
-        </button>` : ''}
-        <button
-          class="btn btn-sm"
-          style="border:2px solid #2563eb; color:#2563eb;"
-          onclick="loadBookings(${event.id}, '${escapeHtml(event.title || event.eventName || '')}')">
-          🎟️ View Bookings
+        <button id="navLogoutBtn" class="btn btn-danger-outline">
+          🚪 Logout
         </button>
       </div>
+
     </div>
-  `;
-}
-
-/** Renders array of events into a grid container. */
-function renderEventCards(container, events) {
-  // Remove skeleton loaders
-  container.querySelectorAll('.skeleton-card').forEach(s => s.remove());
-
-  if (!events || events.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-  container.innerHTML = events.map(buildEventCard).join('');
-}
-
-/** Updates the 4 summary stat counters. */
-function updateStats(events) {
-  const total     = events.length;
-  const active    = events.filter(e => !e.cancelled).length;
-  const cancelled = events.filter(e => e.cancelled).length;
-  // Total bookings = sum of booked seats across all events
-  const bookings  = events.reduce((sum, e) => {
-    const booked = (e.totalSeats || 0) - (e.availableSeats ?? e.totalSeats ?? 0);
-    return sum + Math.max(0, booked);
-  }, 0);
-
-  statTotal.textContent     = total;
-  statActive.textContent    = active;
-  statCancelled.textContent = cancelled;
-  statBookings.textContent  = bookings;
-}
-
-/** Fetches all events from GET /api/events/upcoming and renders them. */
-async function loadEvents() {
-  try {
-    // Your backend: GET /api/events (Organizer sees all, customer sees upcoming)
-    const res = await apiFetch('/events');
-
-    if (!res.ok) {
-      if (res.status === 401) {
-      console.log("Unauthorized access - token may be invalid or expired. Redirecting to login.");
-       //logout(); return;
-        }
-      throw new Error('Failed to load events');
-    }
-
-    allEvents = await res.json();
-
-    // Update stat cards
-    updateStats(allEvents);
-
-    // Render recent 3 on overview
-    renderEventCards(recentEventsGrid, allEvents.slice(0, 3));
-
-    // Render all events on My Events section
-    renderEventCards(allEventsGrid, filterEvents(allEvents, currentFilter));
-
-    // Show empty state if no events
-    if (allEvents.length === 0) {
-      emptyState.style.display = 'block';
-    } else {
-      emptyState.style.display = 'none';
-    }
-
-  } catch (err) {
-    console.log(err);
-    showAlert(eventsAlert, 'error', err.message || 'Could not load events.');
-    recentEventsGrid.innerHTML = '';
-    allEventsGrid.innerHTML    = '';
-  }
-}
-
-/** Safely escape HTML to prevent XSS. */
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+  </header>
 
 
-// ================================================
-// H. CREATE EVENT
-// ================================================
-
-/** Validates the Create Event form. Returns true if valid. */
-function validateCreateForm() {
-  let valid = true;
-  if (!createName.value.trim()) {
-    showFieldError(createName, 'createNameError', 'Event name is required'); valid = false;
-  }
-  if (!createDesc.value.trim()) {
-    showFieldError(createDesc, 'createDescError', 'Description is required'); valid = false;
-  }
-  if (!createDate.value) {
-    showFieldError(createDate, 'createDateError', 'Date & time is required'); valid = false;
-  } else if (new Date(createDate.value) <= new Date()) {
-    showFieldError(createDate, 'createDateError', 'Date must be in the future'); valid = false;
-  }
-  if (!createVenue.value.trim()) {
-    showFieldError(createVenue, 'createVenueError', 'Venue is required'); valid = false;
-  }
-  if (!createSeats.value || createSeats.value < 1) {
-    showFieldError(createSeats, 'createSeatsError', 'Enter a valid number of seats'); valid = false;
-  }
-  if (createPrice.value === '' || createPrice.value < 0) {
-    showFieldError(createPrice, 'createPriceError', 'Enter a valid ticket price'); valid = false;
-  }
-  return valid;
-}
-
-createEventForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!validateCreateForm()) return;
-
-  createEventSubmitBtn.disabled    = true;
-  createEventSubmitBtn.textContent = 'Creating...';
-  createModalAlert.style.display   = 'none';
-
-  const body = {
-    title:         createName.value.trim(),
-    description:  createDesc.value.trim(),
-    eventDateTime:     createDate.value,
-    venue:        createVenue.value.trim(),
-    totalSeats:   parseInt(createSeats.value),
-    price:  parseFloat(createPrice.value)
-  };
-
-  try {
-    // Your backend: POST /api/events  (API already ends with /events, so path is '')
-    // const res = await apiFetch('', {
-    //   method: 'POST',
-    //   body: JSON.stringify(body)
-    // });
-    const res = await apiFetch('/events', {
-      method: 'POST',
-      body: JSON.stringify(body)
-    });
-
-    if (res.status === 201 || res.status === 200) {
-      console.log("Created event successfully");
-    } else {
-      const errorText = await res.text(); // Read the error message from backend
-      console.error("Backend Error (400):", errorText);
-      console.log("Status Code:", res.status);
-      throw new Error(errorText || 'Failed to create event');
-    }
-
-    // if (!res.ok) {
-    //   const err = await res.json().catch(() => ({}));
-    //   throw new Error(err.message || 'Failed to create event');
-    // }
-
-    // Success
-    closeModal(createEventModal);
-    showAlert(eventsAlert, 'success', 'Event created successfully!');
-    await loadEvents(); // Refresh list
-
-  } catch (err) {
-    //console.log(err);
-    showAlert(createModalAlert, 'error', err.message);
-  } finally {
-    createEventSubmitBtn.disabled    = false;
-    createEventSubmitBtn.textContent = '＋ Create Event';
-  }
-});
+  <!-- ================================================
+       PAGE WRAPPER
+       Sidebar (left) + Main content (right) side by side
+  ================================================ -->
+  <div class="dash-wrapper">
 
 
-// ================================================
-// I. EDIT EVENT
-// ================================================
+    <!-- ============================================
+         SIDEBAR — Left navigation panel
+         Menu items: Dashboard, My Events,
+                     Create Event, Logout
+    ============================================ -->
+    <aside class="dash-sidebar">
+      <nav class="sidebar-nav">
 
-/**
- * Opens the Edit modal and pre-fills fields with event data.
- * Called from event card button: onclick="openEditModal(id)"
- */
-window.openEditModal = function(id) {
-  const event = allEvents.find(e => e.id === id);
-  if (!event) return;
+        <!-- Each nav item has data-target to tell JS which section to show -->
+        <button class="sidebar-item active" data-target="section-overview" id="navDashboard">
+          <span class="sidebar-icon">🏠</span>
+          <span class="sidebar-label">Dashboard</span>
+        </button>
 
-  // Pre-fill all fields
-  editEventId.value = event.id;
-  editName.value    = event.title || event.eventName || '';
-  editDesc.value    = event.description || '';
-  editVenue.value   = event.venue || '';
-  editSeats.value   = event.totalSeats || '';
-  editPrice.value   = event.ticketPrice ?? event.price ?? '';
+        <button class="sidebar-item" data-target="section-events" id="navEvents">
+          <span class="sidebar-icon">📅</span>
+          <span class="sidebar-label">My Events</span>
+        </button>
 
-  // Format datetime for input (needs "YYYY-MM-DDTHH:MM" format)
-  if (event.eventDateTime || event.date) {
-    const raw = event.eventDateTime || event.date;
-    // Slice to "YYYY-MM-DDTHH:MM" (16 chars)
-    editDate.value = raw.slice(0, 16);
-  }
+        <button class="sidebar-item" id="navCreateEvent">
+          <span class="sidebar-icon">➕</span>
+          <span class="sidebar-label">Create Event</span>
+        </button>
 
-  openModal(editEventModal);
-};
+        <!-- Divider line -->
+        <div class="sidebar-divider"></div>
 
-/** Validates the Edit Event form. Returns true if valid. */
-function validateEditForm() {
-  let valid = true;
-  if (!editName.value.trim())   { showFieldError(editName,  'editNameError',  'Event name is required'); valid = false; }
-  if (!editDesc.value.trim())   { showFieldError(editDesc,  'editDescError',  'Description is required'); valid = false; }
-  if (!editDate.value)          { showFieldError(editDate,  'editDateError',  'Date & time is required'); valid = false; }
-  if (!editVenue.value.trim())  { showFieldError(editVenue, 'editVenueError', 'Venue is required'); valid = false; }
-  if (!editSeats.value || editSeats.value < 1) { showFieldError(editSeats, 'editSeatsError', 'Enter valid seats'); valid = false; }
-  if (editPrice.value === '' || editPrice.value < 0) { showFieldError(editPrice, 'editPriceError', 'Enter valid price'); valid = false; }
-  return valid;
-}
+        <button class="sidebar-item sidebar-item-danger" id="sidebarLogoutBtn">
+          <span class="sidebar-icon">🚪</span>
+          <span class="sidebar-label">Logout</span>
+        </button>
 
-editEventForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (!validateEditForm()) return;
-
-  editEventSubmitBtn.disabled    = true;
-  editEventSubmitBtn.textContent = 'Saving...';
-  editModalAlert.style.display   = 'none';
-
-  const id   = editEventId.value;
-  const body = {
-    title:        editName.value.trim(),
-    description: editDesc.value.trim(),
-    eventDateTime:    editDate.value,
-    venue:       editVenue.value.trim(),
-    totalSeats:  parseInt(editSeats.value),
-    price: parseFloat(editPrice.value)
-  };
-
-  try {
-    // Your backend: PUT /api/events/{eventId}
-    const res = await apiFetch(`/events/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(body)
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Failed to update event');
-    }
-
-    closeModal(editEventModal);
-    showAlert(eventsAlert, 'success', 'Event updated successfully!');
-    await loadEvents();
-
-  } catch (err) {
-    showAlert(editModalAlert, 'error', err.message);
-  } finally {
-    editEventSubmitBtn.disabled    = false;
-    editEventSubmitBtn.textContent = '💾 Save Changes';
-  }
-});
+      </nav>
+    </aside>
 
 
-// ================================================
-// J. CANCEL EVENT
-// ================================================
-
-/**
- * Opens the Cancel Confirm modal.
- * Called from event card button: onclick="openCancelModal(id, name)"
- */
-window.openCancelModal = function(id, name) {
-  cancelEventId.value              = id;
-  cancelConfirmEventName.textContent = `Event: "${name}"`;
-  openModal(cancelConfirmModal);
-};
-
-cancelConfirmYes.addEventListener('click', async () => {
-  const id = cancelEventId.value;
-  cancelConfirmYes.disabled    = true;
-  cancelConfirmYes.textContent = 'Cancelling...';
-
-  try {
-    // Your backend: PUT /api/events/{eventId}/cancel  (NOT DELETE!)
-    const res = await apiFetch(`/events/${id}/cancel`, { method: 'PUT' });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Failed to cancel event');
-    }
-
-    closeModal(cancelConfirmModal);
-    showAlert(eventsAlert, 'success', 'Event cancelled successfully.');
-    await loadEvents();
-
-  } catch (err) {
-    closeModal(cancelConfirmModal);
-    showAlert(eventsAlert, 'error', err.message);
-  } finally {
-    cancelConfirmYes.disabled    = false;
-    cancelConfirmYes.textContent = 'Yes, Cancel Event';
-  }
-});
+    <!-- ============================================
+         MAIN CONTENT AREA
+         All sections live here. JS shows/hides them.
+    ============================================ -->
+    <main class="dash-main">
 
 
-// ================================================
-// K. VIEW BOOKINGS
-// ================================================
+      <!-- ==========================================
+           SECTION 1: OVERVIEW / DASHBOARD HOME
+           Summary cards + recent events preview
+      ========================================== -->
+      <section id="section-overview" class="dash-section active-section">
 
-/**
- * Loads bookings for a specific event and shows the bookings section.
- * Called from event card: onclick="loadBookings(id, name)"
- */
-window.loadBookings = async function(eventId, eventName) {
-  // Switch to bookings section
-  showSection('section-bookings');
-  bookingsEventName.textContent = `Bookings for: ${eventName}`;
-  bookingsTableBody.innerHTML   = '<tr><td colspan="6" style="text-align:center;padding:20px;">Loading...</td></tr>';
-  bookingsTable.style.display   = 'table';
-  noBookings.style.display      = 'none';
-  bookingsAlert.style.display   = 'none';
+        <!-- Page heading -->
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Dashboard Overview</h1>
+            <p class="section-subtitle">Welcome back! Here's what's happening with your events.</p>
+          </div>
+          <!-- Quick action button -->
+          <button class="btn btn-primary" id="overviewCreateBtn">
+            ＋ Create Event
+          </button>
+        </div>
 
-  try {
-    // NOTE: Share your Bookings controller so we can set the exact URL.
-    // Placeholder — update this path to match your BookingController endpoint.
-    const res = await apiFetch(`/bookings/event/${eventId}`);
+        <!-- ------------------------------------------
+             SUMMARY CARDS — 4 stat boxes
+             Numbers filled dynamically by JS
+        ------------------------------------------ -->
+        <div class="stats-grid">
 
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Failed to load bookings');
-    }
+          <!-- Card 1: Total Events -->
+          <div class="stat-card stat-card-blue">
+            <div class="stat-icon">📋</div>
+            <div class="stat-info">
+              <p class="stat-label">Total Events</p>
+              <!-- JS writes the number here -->
+              <p class="stat-number" id="statTotal">—</p>
+            </div>
+          </div>
 
-    const bookings = await res.json();
+          <!-- Card 2: Active Events -->
+          <div class="stat-card stat-card-green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <p class="stat-label">Active Events</p>
+              <p class="stat-number" id="statActive">—</p>
+            </div>
+          </div>
 
-    if (!bookings || bookings.length === 0) {
-      bookingsTable.style.display  = 'none';
-      noBookings.style.display     = 'block';
-      return;
-    }
+          <!-- Card 3: Cancelled Events -->
+          <div class="stat-card stat-card-red">
+            <div class="stat-icon">❌</div>
+            <div class="stat-info">
+              <p class="stat-label">Cancelled Events</p>
+              <p class="stat-number" id="statCancelled">—</p>
+            </div>
+          </div>
 
-    // Build table rows
-    bookingsTableBody.innerHTML = bookings.map((b, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td>${escapeHtml(b.userName || 'N/A')}</td>
-        <td>${escapeHtml(b.userEmail)}</td>
-        <td style="text-align:center;">${b.seatsBooked}</td>
-        <td>${formatDate(b.bookingTime)}</td>
-        <td>
-          <span class="status-badge ${b.bookingStatus === 'CONFIRMED' ? 'status-active' : 'status-cancelled'}">
-            ${b.bookingStatus || 'CONFIRMED'}
-          </span>
-        </td>
-      </tr>
-    `).join('');
+          <!-- Card 4: Total Bookings -->
+          <div class="stat-card stat-card-purple">
+            <div class="stat-icon">🎟️</div>
+            <div class="stat-info">
+              <p class="stat-label">Total Bookings</p>
+              <p class="stat-number" id="statBookings">—</p>
+            </div>
+          </div>
 
-  } catch (err) {
-    console.log(err);
-    bookingsTableBody.innerHTML = '';
-    bookingsTable.style.display = 'none';
-    showAlert(bookingsAlert, 'error', err.message);
-  }
-};
+        </div><!-- /stats-grid -->
 
+        <!-- Recent events preview (first 3 events) -->
+        <div class="recent-events-header">
+          <h2 class="subsection-title">Recent Events</h2>
+          <button class="link-btn" data-target="section-events" id="viewAllBtn">
+            View All →
+          </button>
+        </div>
+        <!-- JS renders recent event cards here -->
+        <div class="events-grid" id="recentEventsGrid">
+          <!-- Skeleton loader shown while fetching -->
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
 
-// ================================================
-// L. LOGOUT
-// ================================================
-function logout() {
-  localStorage.removeItem('authToken');
-  localStorage.removeItem('userEmail');
-  localStorage.removeItem('token');
-  localStorage.removeItem('userName');
-  localStorage.removeItem('userRole');
-  window.location.href = 'index.html';
-}
-
-navLogoutBtn.addEventListener('click',     logout);
-sidebarLogoutBtn.addEventListener('click', logout);
+      </section><!-- /section-overview -->
 
 
-// ================================================
-// M. INIT — Runs when page loads
-// ================================================
-document.addEventListener('DOMContentLoaded', () => {
-  // Show overview section by default
-  showSection('section-overview');
-  // Load all events from backend
-  loadEvents();
-});
+      <!-- ==========================================
+           SECTION 2: MY EVENTS
+           Full list of all events as cards
+      ========================================== -->
+      <section id="section-events" class="dash-section">
+
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">My Events</h1>
+            <p class="section-subtitle">Manage all your created events here.</p>
+          </div>
+          <button class="btn btn-primary" id="eventsCreateBtn">
+            ＋ Create Event
+          </button>
+        </div>
+
+        <!-- Filter bar: All | Active | Cancelled -->
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="ALL">All</button>
+          <button class="filter-btn" data-filter="ACTIVE">Active</button>
+          <button class="filter-btn" data-filter="CANCELLED">Cancelled</button>
+        </div>
+
+        <!-- Alert box for success/error messages -->
+        <div id="eventsAlert" class="alert" style="display:none;"></div>
+
+        <!-- JS renders all event cards here -->
+        <div class="events-grid" id="allEventsGrid">
+          <!-- Skeleton loader -->
+          <div class="skeleton-card"></div>
+          <div class="skeleton-card"></div>
+        </div>
+
+        <!-- Empty state — shown by JS when no events exist -->
+        <div id="emptyState" class="empty-state" style="display:none;">
+          <div class="empty-icon">📭</div>
+          <h3 class="empty-title">No Events Yet</h3>
+          <p class="empty-subtitle">Create your first event to get started!</p>
+          <button class="btn btn-primary" id="emptyCreateBtn">＋ Create Your First Event</button>
+        </div>
+
+      </section><!-- /section-events -->
+
+
+      <!-- ==========================================
+           SECTION 3: BOOKINGS
+           Shown when "View Bookings" is clicked on an event card.
+           JS populates the table rows.
+      ========================================== -->
+      <section id="section-bookings" class="dash-section">
+
+        <div class="section-header">
+          <div>
+            <!-- Event name filled by JS -->
+            <h1 class="section-title">Bookings</h1>
+            <p class="section-subtitle" id="bookingsEventName">
+              Loading bookings...
+            </p>
+          </div>
+          <!-- Buttons container -->
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="btn btn-primary" id="downloadCsvBtn" style="display: none;">
+              📥 Download CSV
+            </button>
+            <button class="btn btn-outline" id="backToEventsBtn">
+              ← Back to Events
+            </button>
+          </div>
+        </div>
+
+        <!-- Alert for errors -->
+        <div id="bookingsAlert" class="alert" style="display:none;"></div>
+
+        <!-- Bookings table wrapper -->
+        <div class="table-wrapper">
+          <table class="bookings-table" id="bookingsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Tickets Booked</th>
+                <th>Booked At</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <!-- JS fills these rows dynamically -->
+            <tbody id="bookingsTableBody">
+              <!-- rows added by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty bookings state -->
+        <div id="noBookings" class="empty-state" style="display:none;">
+          <div class="empty-icon">🎟️</div>
+          <h3 class="empty-title">No Bookings Yet</h3>
+          <p class="empty-subtitle">No one has booked this event yet.</p>
+        </div>
+
+      </section><!-- /section-bookings -->
+
+
+    </main><!-- /dash-main -->
+  </div><!-- /dash-wrapper -->
+
+
+  <!-- ================================================
+       CREATE EVENT MODAL
+       Overlay → Box → Form
+       Fields: name, description, date, venue, seats
+  ================================================ -->
+  <div id="createEventModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <div>
+          <h2 id="createModalTitle" class="modal-title">Create New Event</h2>
+          <p class="modal-subtitle">Fill in the details to list your event</p>
+        </div>
+        <button id="closeCreateModal" class="modal-close-btn" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Success/Error alert inside modal -->
+      <div id="createModalAlert" class="alert" style="display:none;"></div>
+
+      <form id="createEventForm" class="modal-form" novalidate>
+
+        <!-- Event Name -->
+        <div class="form-group">
+          <label for="createName" class="form-label">Event Name <span class="required">*</span></label>
+          <input type="text" id="createName" class="form-input" placeholder="e.g. YOASOBI Asia Tour 2026" />
+          <span class="field-error" id="createNameError"></span>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="createDesc" class="form-label">Description <span class="required">*</span></label>
+          <textarea id="createDesc" class="form-input form-textarea" placeholder="Describe your event..." rows="3"></textarea>
+          <span class="field-error" id="createDescError"></span>
+        </div>
+
+        <!-- Date & Time -->
+        <div class="form-group">
+          <label for="createDate" class="form-label">Date &amp; Time <span class="required">*</span></label>
+          <input type="datetime-local" id="createDate" class="form-input" />
+          <span class="field-error" id="createDateError"></span>
+        </div>
+
+        <!-- Venue -->
+        <div class="form-group">
+          <label for="createVenue" class="form-label">Venue <span class="required">*</span></label>
+          <input type="text" id="createVenue" class="form-input" placeholder="e.g. Jakarta Convention Center" />
+          <span class="field-error" id="createVenueError"></span>
+        </div>
+
+        <!-- Total Seats -->
+        <div class="form-group">
+          <label for="createSeats" class="form-label">Total Seats <span class="required">*</span></label>
+          <input type="number" id="createSeats" class="form-input" placeholder="e.g. 500" min="1" />
+          <span class="field-error" id="createSeatsError"></span>
+        </div>
+
+        <!-- Ticket Price -->
+        <div class="form-group">
+          <label for="createPrice" class="form-label">Ticket Price (₹) <span class="required">*</span></label>
+          <input type="number" id="createPrice" class="form-input" placeholder="e.g. 999" min="0" />
+          <span class="field-error" id="createPriceError"></span>
+        </div>
+
+        <button type="submit" id="createEventSubmitBtn" class="btn btn-primary btn-full">
+          ＋ Create Event
+        </button>
+
+      </form>
+
+    </div>
+  </div><!-- /createEventModal -->
+
+
+  <!-- ================================================
+       EDIT EVENT MODAL
+       Same fields as create, but pre-filled by JS.
+       A hidden input stores the event ID being edited.
+  ================================================ -->
+  <div id="editEventModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <div>
+          <h2 id="editModalTitle" class="modal-title">Edit Event</h2>
+          <p class="modal-subtitle">Update your event details below</p>
+        </div>
+        <button id="closeEditModal" class="modal-close-btn" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <!-- Alert inside edit modal -->
+      <div id="editModalAlert" class="alert" style="display:none;"></div>
+
+      <form id="editEventForm" class="modal-form" novalidate>
+
+        <!-- Hidden field to store the event's ID (needed for PUT /events/{id}) -->
+        <input type="hidden" id="editEventId" />
+
+        <!-- Event Name -->
+        <div class="form-group">
+          <label for="editName" class="form-label">Event Name <span class="required">*</span></label>
+          <input type="text" id="editName" class="form-input" />
+          <span class="field-error" id="editNameError"></span>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="editDesc" class="form-label">Description <span class="required">*</span></label>
+          <textarea id="editDesc" class="form-input form-textarea" rows="3"></textarea>
+          <span class="field-error" id="editDescError"></span>
+        </div>
+
+        <!-- Date & Time -->
+        <div class="form-group">
+          <label for="editDate" class="form-label">Date &amp; Time <span class="required">*</span></label>
+          <input type="datetime-local" id="editDate" class="form-input" />
+          <span class="field-error" id="editDateError"></span>
+        </div>
+
+        <!-- Venue -->
+        <div class="form-group">
+          <label for="editVenue" class="form-label">Venue <span class="required">*</span></label>
+          <input type="text" id="editVenue" class="form-input" />
+          <span class="field-error" id="editVenueError"></span>
+        </div>
+
+        <!-- Total Seats -->
+        <div class="form-group">
+          <label for="editSeats" class="form-label">Total Seats <span class="required">*</span></label>
+          <input type="number" id="editSeats" class="form-input" min="1" />
+          <span class="field-error" id="editSeatsError"></span>
+        </div>
+
+        <!-- Ticket Price -->
+        <div class="form-group">
+          <label for="editPrice" class="form-label">Ticket Price (₹) <span class="required">*</span></label>
+          <input type="number" id="editPrice" class="form-input" min="0" />
+          <span class="field-error" id="editPriceError"></span>
+        </div>
+
+        <button type="submit" id="editEventSubmitBtn" class="btn btn-primary btn-full">
+          💾 Save Changes
+        </button>
+
+      </form>
+
+    </div>
+  </div><!-- /editEventModal -->
+
+
+  <!-- ================================================
+       CANCEL CONFIRM MODAL
+       Simple "Are you sure?" before deleting.
+       WHY: Prevents accidental cancellation.
+  ================================================ -->
+  <div id="cancelConfirmModal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box modal-box-sm">
+
+      <div class="modal-header">
+        <div>
+          <h2 class="modal-title">Cancel Event?</h2>
+          <p class="modal-subtitle" id="cancelConfirmEventName">This action cannot be undone.</p>
+        </div>
+        <button id="closeCancelModal" class="modal-close-btn" type="button">✕</button>
+      </div>
+
+      <p class="confirm-message">
+        Are you sure you want to <strong>cancel</strong> this event?
+        All existing bookings will be affected.
+      </p>
+
+      <!-- Hidden field stores event ID to cancel -->
+      <input type="hidden" id="cancelEventId" />
+
+      <div class="confirm-actions">
+        <button id="cancelConfirmYes" class="btn btn-danger">Yes, Cancel Event</button>
+        <button id="cancelConfirmNo"  class="btn btn-outline">No, Keep It</button>
+      </div>
+
+    </div>
+  </div><!-- /cancelConfirmModal -->
+
+
+  <!-- Step 4: Dashboard JavaScript -->
+  <script src="js/eventDashboard.js"></script>
+
+</body>
+</html>
