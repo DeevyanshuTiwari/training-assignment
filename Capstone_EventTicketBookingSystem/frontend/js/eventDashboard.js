@@ -3,7 +3,7 @@
 // A. CONFIG & DOM REFERENCES
 // ================================================
 
-const API = 'http://localhost:8083/api';
+const API = 'http://localhost:8082/api';
 
 // --- Auth ---
 const token        = localStorage.getItem('authToken');

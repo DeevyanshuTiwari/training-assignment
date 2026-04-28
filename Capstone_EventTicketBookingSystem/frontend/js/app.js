@@ -17,7 +17,7 @@
 // WHY: Keep the API URL in ONE place.
 //      If your backend URL changes, update only here.
 // ------------------------------------------------
-const API_BASE_URL = 'http://localhost:8082/api/auth';
+const API_BASE_URL = 'http://localhost:8080/api/auth';
 
 
 // ------------------------------------------------

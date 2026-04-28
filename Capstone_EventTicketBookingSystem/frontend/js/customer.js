@@ -5,7 +5,7 @@
 ============================================= */
 
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-const API_BASE = 'http://localhost:8083/api';
+const API_BASE = 'http://localhost:8082/api';
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -144,7 +144,7 @@ function initProfileDrawer() {
 
       try {
         // Send PUT request with JSON body (authFetch automatically adds Bearer token)
-        const res = await authFetch(`http://localhost:8082/api/users/me`, 'PUT', { name, email, phone });
+        const res = await authFetch(`http://localhost:8080/api/users/me`, 'PUT', { name, email, phone });
 
         if (res.status === 401 || res.status === 403) {
           localStorage.clear();
@@ -201,7 +201,7 @@ function initProfileDrawer() {
 async function fetchUserProfile() {
   try {
     // Note: Using /users/me endpoint based on your UserProfileController
-    const res = await authFetch(`http://localhost:8082/api/users/me`, 'GET');
+    const res = await authFetch(`http://localhost:8080/api/users/me`, 'GET');
 
     if (res.status === 401 || res.status === 403) {
       localStorage.clear();

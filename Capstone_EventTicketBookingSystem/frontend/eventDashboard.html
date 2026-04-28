@@ -11,6 +11,13 @@
 
 <body>
 
+<!-- Atmospheric background -->
+<div class="noise-overlay" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.015;background-image:url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E');background-repeat:repeat;background-size:128px 128px"></div>
+
+<!-- ================================================
+     NAVBAR — Fixed top bar
+     Logo | Organizer name | Logout button
+================================================ -->
 <header class="dash-navbar">
     <div class="dash-navbar-inner">
 
@@ -22,6 +29,7 @@
 
         <!-- Right side: organizer name + logout -->
         <div class="dash-navbar-right">
+            <!-- Organizer name filled by JS from localStorage -->
             <div class="dash-user-info">
                 <span class="dash-user-avatar" id="userAvatar">O</span>
                 <span class="dash-user-name" id="organizerName">Organizer</span>
@@ -35,8 +43,18 @@
 </header>
 
 
+<!-- ================================================
+     PAGE WRAPPER
+     Sidebar (left) + Main content (right) side by side
+================================================ -->
 <div class="dash-wrapper">
 
+
+    <!-- ============================================
+         SIDEBAR — Left navigation panel
+         Menu items: Dashboard, My Events,
+                     Create Event, Logout
+    ============================================ -->
     <aside class="dash-sidebar">
         <nav class="sidebar-nav">
 
@@ -68,8 +86,17 @@
     </aside>
 
 
+    <!-- ============================================
+         MAIN CONTENT AREA
+         All sections live here. JS shows/hides them.
+    ============================================ -->
     <main class="dash-main">
 
+
+        <!-- ==========================================
+             SECTION 1: OVERVIEW / DASHBOARD HOME
+             Summary cards + recent events preview
+        ========================================== -->
         <section id="section-overview" class="dash-section active-section">
 
             <!-- Page heading -->
@@ -84,6 +111,10 @@
                 </button>
             </div>
 
+            <!-- ------------------------------------------
+                 SUMMARY CARDS — 4 stat boxes
+                 Numbers filled dynamically by JS
+            ------------------------------------------ -->
             <div class="stats-grid">
 
                 <!-- Card 1: Total Events -->
@@ -123,7 +154,7 @@
                     </div>
                 </div>
 
-            </div>
+            </div><!-- /stats-grid -->
 
             <!-- Recent events preview (first 3 events) -->
             <div class="recent-events-header">
@@ -134,13 +165,19 @@
             </div>
             <!-- JS renders recent event cards here -->
             <div class="events-grid" id="recentEventsGrid">
+                <!-- Skeleton loader shown while fetching -->
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
                 <div class="skeleton-card"></div>
             </div>
 
-        </section>
+        </section><!-- /section-overview -->
 
+
+        <!-- ==========================================
+             SECTION 2: MY EVENTS
+             Full list of all events as cards
+        ========================================== -->
         <section id="section-events" class="dash-section">
 
             <div class="section-header">
@@ -178,8 +215,14 @@
                 <button class="btn btn-primary" id="emptyCreateBtn">＋ Create Your First Event</button>
             </div>
 
-        </section>
+        </section><!-- /section-events -->
 
+
+        <!-- ==========================================
+             SECTION 3: BOOKINGS
+             Shown when "View Bookings" is clicked on an event card.
+             JS populates the table rows.
+        ========================================== -->
         <section id="section-bookings" class="dash-section">
 
             <div class="section-header">
@@ -190,10 +233,15 @@
                         Loading bookings...
                     </p>
                 </div>
-                <!-- Back button — returns to My Events -->
-                <button class="btn btn-outline" id="backToEventsBtn">
-                    ← Back to Events
-                </button>
+                <!-- Buttons container -->
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <button class="btn btn-primary" id="downloadCsvBtn" style="display: none;">
+                        📥 Download CSV
+                    </button>
+                    <button class="btn btn-outline" id="backToEventsBtn">
+                        ← Back to Events
+                    </button>
+                </div>
             </div>
 
             <!-- Alert for errors -->
@@ -207,6 +255,7 @@
                         <th>#</th>
                         <th>User Name</th>
                         <th>Email</th>
+                        <th>Phone</th>
                         <th>Tickets Booked</th>
                         <th>Booked At</th>
                         <th>Status</th>
@@ -226,12 +275,18 @@
                 <p class="empty-subtitle">No one has booked this event yet.</p>
             </div>
 
-        </section>
+        </section><!-- /section-bookings -->
 
 
-    </main>
-</div>
+    </main><!-- /dash-main -->
+</div><!-- /dash-wrapper -->
 
+
+<!-- ================================================
+     CREATE EVENT MODAL
+     Overlay → Box → Form
+     Fields: name, description, date, venue, seats
+================================================ -->
 <div id="createEventModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="createModalTitle">
     <div class="modal-box">
 
@@ -297,8 +352,14 @@
         </form>
 
     </div>
-</div>
+</div><!-- /createEventModal -->
 
+
+<!-- ================================================
+     EDIT EVENT MODAL
+     Same fields as create, but pre-filled by JS.
+     A hidden input stores the event ID being edited.
+================================================ -->
 <div id="editEventModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
     <div class="modal-box">
 
@@ -367,8 +428,14 @@
         </form>
 
     </div>
-</div>
+</div><!-- /editEventModal -->
 
+
+<!-- ================================================
+     CANCEL CONFIRM MODAL
+     Simple "Are you sure?" before deleting.
+     WHY: Prevents accidental cancellation.
+================================================ -->
 <div id="cancelConfirmModal" class="modal-overlay" role="dialog" aria-modal="true">
     <div class="modal-box modal-box-sm">
 
@@ -394,9 +461,10 @@
         </div>
 
     </div>
-</div>
+</div><!-- /cancelConfirmModal -->
 
 
+<!-- Step 4: Dashboard JavaScript -->
 <script src="js/eventDashboard.js"></script>
 
 </body>
