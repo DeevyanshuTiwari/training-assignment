@@ -5,6 +5,7 @@ public class BookingRequest {
     private Long eventId;
     private Integer seatsRequested;
     private String userName;
+    private String phone;
 
     public BookingRequest() {
     }
@@ -15,6 +16,14 @@ public class BookingRequest {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Long getEventId() {
