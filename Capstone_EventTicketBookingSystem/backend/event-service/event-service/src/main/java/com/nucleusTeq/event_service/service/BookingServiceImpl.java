@@ -57,6 +57,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = new Booking();
         booking.setUserEmail(userEmail.trim().toLowerCase());
         booking.setUserName(request.getUserName());
+        booking.setPhone(request.getPhone());
         booking.setSeatsBooked(request.getSeatsRequested());
         booking.setBookingTime(LocalDateTime.now());
         booking.setBookingStatus("CONFIRMED");
@@ -141,8 +142,10 @@ public class BookingServiceImpl implements BookingService {
                 booking.getId(),
                 booking.getEvent().getId(),
                 booking.getEvent().getTitle(),
+                booking.getEvent().getEventDateTime(),
                 booking.getUserEmail(),
                 booking.getUserName(),
+                booking.getPhone(),
                 booking.getSeatsBooked(),
                 booking.getBookingStatus(),
                 booking.getBookingTime());
