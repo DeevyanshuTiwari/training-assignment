@@ -5,7 +5,7 @@
 ============================================= */
 
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-const API_BASE = 'http://localhost:8082/api';
+const API_BASE = 'http://localhost:8083/api';
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -144,7 +144,7 @@ function initProfileDrawer() {
 
       try {
         // Send PUT request with JSON body (authFetch automatically adds Bearer token)
-        const res = await authFetch(`http://localhost:8080/api/users/me`, 'PUT', { name, email, phone });
+        const res = await authFetch(`http://localhost:8082/api/users/me`, 'PUT', { name, email, phone });
 
         if (res.status === 401 || res.status === 403) {
           localStorage.clear();
@@ -201,7 +201,7 @@ function initProfileDrawer() {
 async function fetchUserProfile() {
   try {
     // Note: Using /users/me endpoint based on your UserProfileController
-    const res = await authFetch(`http://localhost:8080/api/users/me`, 'GET');
+    const res = await authFetch(`http://localhost:8082/api/users/me`, 'GET');
 
     if (res.status === 401 || res.status === 403) {
       localStorage.clear();
@@ -601,7 +601,8 @@ async function confirmBooking(eventId, seats) {
     const res = await authFetch(`${API_BASE}/bookings`, 'POST', {
       eventId: parseInt(eventId),
       seatsRequested: seats,
-      userName: localStorage.getItem('userName') || 'Anonymous'
+      userName: localStorage.getItem('userName') || 'Anonymous',
+      phone: localStorage.getItem('userPhone') || 'N/A'
     });
 
     if (res.status === 401 || res.status === 403) {
@@ -741,12 +742,15 @@ function applyBookingFilter() {
   const filtered = allBookings.filter(b => {
     if (activeFilter === 'ALL') return true;
     if (activeFilter === 'CANCELLED') return b.bookingStatus === 'CANCELLED';
-    // We check the bookingTime date since BookingResponse doesn't include eventDateTime
-    // Upcoming = booking is CONFIRMED (not cancelled, not in the past by bookingTime)
-    if (activeFilter === 'UPCOMING') return b.bookingStatus !== 'CANCELLED';
+    // Upcoming = booking is CONFIRMED and the event itself is in the future
+    if (activeFilter === 'UPCOMING') {
+      const eTime = new Date(b.eventDateTime);
+      return eTime >= now && b.bookingStatus !== 'CANCELLED';
+    }
+    // Past = booking is CONFIRMED and the event itself is in the past
     if (activeFilter === 'PAST') {
-      const bTime = new Date(b.bookingTime);
-      return bTime < now && b.bookingStatus !== 'CANCELLED';
+      const eTime = new Date(b.eventDateTime);
+      return eTime < now && b.bookingStatus !== 'CANCELLED';
     }
     return true;
   });
