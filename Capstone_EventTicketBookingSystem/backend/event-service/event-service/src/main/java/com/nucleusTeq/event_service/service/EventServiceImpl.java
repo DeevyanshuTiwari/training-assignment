@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.nucleusTeq.event_service.dto.EventRequest;
 import com.nucleusTeq.event_service.dto.EventResponse;
@@ -21,6 +22,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse createEvent(EventRequest request) {
         validateEventRequest(request);
         if (!request.getEventDateTime().isAfter(LocalDateTime.now())) {
@@ -62,6 +64,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse updateEvent(Long eventId, EventRequest request) {
         validateEventRequest(request);
         Event event = eventRepository.findById(eventId)
@@ -95,6 +98,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse cancelEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found."));
