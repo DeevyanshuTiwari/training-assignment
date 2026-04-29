@@ -231,8 +231,7 @@ function clearFieldError(inputEl, errorEl) {
 }
 
 // Email regex — checks for basic email format
-// Matches: anything@anything.anything
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@gmail\.com$/;
 
 // Password rules matching backend:
 // 8–12 chars, at least one uppercase, at least one special char

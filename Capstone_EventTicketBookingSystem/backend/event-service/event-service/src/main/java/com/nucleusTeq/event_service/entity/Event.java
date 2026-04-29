@@ -13,14 +13,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+
+import org.hibernate.annotations.Check;
 
 @Entity
 @Table(name = "events")
+@SuppressWarnings("deprecation")
+@Check(constraints = "price >= 0 AND total_seats >= 0 AND available_seats >= 0 AND available_seats <= total_seats")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    private Long version;
 
     @Column(nullable = false, length = 120)
     private String title;
@@ -59,6 +67,14 @@ public class Event {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getTitle() {
