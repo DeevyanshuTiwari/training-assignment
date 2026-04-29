@@ -81,4 +81,15 @@ public class BookingController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Invalid data submitted. Ensure values (e.g. seats, price) meet constraints.");
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGenericException(Exception ex) {
+        // Find root cause
+        Throwable rootCause = ex;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Server Error: " + rootCause.getMessage());
+    }
 }
