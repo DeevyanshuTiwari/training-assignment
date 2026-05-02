@@ -5,7 +5,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Organizer Dashboard — Eventify</title>
-    <!-- Step 2: Dashboard CSS -->
     <link rel="stylesheet" href="css/eventDashboard.css" />
 </head>
 
@@ -35,7 +34,7 @@
                 <span class="dash-user-name" id="organizerName">Organizer</span>
             </div>
             <button id="navLogoutBtn" class="btn btn-danger-outline">
-                🚪 Logout
+                Logout
             </button>
         </div>
 
@@ -43,34 +42,25 @@
 </header>
 
 
-<!-- ================================================
-     PAGE WRAPPER
-     Sidebar (left) + Main content (right) side by side
-================================================ -->
 <div class="dash-wrapper">
 
 
-    <!-- ============================================
-         SIDEBAR — Left navigation panel
-         Menu items: Dashboard, My Events,
-                     Create Event, Logout
-    ============================================ -->
     <aside class="dash-sidebar">
         <nav class="sidebar-nav">
 
             <!-- Each nav item has data-target to tell JS which section to show -->
             <button class="sidebar-item active" data-target="section-overview" id="navDashboard">
-                <span class="sidebar-icon">🏠</span>
+                <span class="sidebar-icon"></span>
                 <span class="sidebar-label">Dashboard</span>
             </button>
 
             <button class="sidebar-item" data-target="section-events" id="navEvents">
-                <span class="sidebar-icon">📅</span>
+                <span class="sidebar-icon"></span>
                 <span class="sidebar-label">My Events</span>
             </button>
 
             <button class="sidebar-item" id="navCreateEvent">
-                <span class="sidebar-icon">➕</span>
+                <span class="sidebar-icon"></span>
                 <span class="sidebar-label">Create Event</span>
             </button>
 
@@ -78,7 +68,7 @@
             <div class="sidebar-divider"></div>
 
             <button class="sidebar-item sidebar-item-danger" id="sidebarLogoutBtn">
-                <span class="sidebar-icon">🚪</span>
+                <span class="sidebar-icon"></span>
                 <span class="sidebar-label">Logout</span>
             </button>
 
@@ -86,17 +76,9 @@
     </aside>
 
 
-    <!-- ============================================
-         MAIN CONTENT AREA
-         All sections live here. JS shows/hides them.
-    ============================================ -->
     <main class="dash-main">
 
 
-        <!-- ==========================================
-             SECTION 1: OVERVIEW / DASHBOARD HOME
-             Summary cards + recent events preview
-        ========================================== -->
         <section id="section-overview" class="dash-section active-section">
 
             <!-- Page heading -->
@@ -111,10 +93,6 @@
                 </button>
             </div>
 
-            <!-- ------------------------------------------
-                 SUMMARY CARDS — 4 stat boxes
-                 Numbers filled dynamically by JS
-            ------------------------------------------ -->
             <div class="stats-grid">
 
                 <!-- Card 1: Total Events -->
