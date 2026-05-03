@@ -695,7 +695,7 @@ window.loadBookings = async function(eventId, eventName) {
 
   try {
     // NOTE: Share your Bookings controller so we can set the exact URL.
-    // Placeholder — update this path to match your BookingController endpoint.
+
     const res = await apiFetch(`/bookings/event/${eventId}`);
 
     if (!res.ok) {
