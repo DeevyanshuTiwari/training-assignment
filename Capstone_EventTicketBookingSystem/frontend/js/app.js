@@ -14,17 +14,12 @@
 
 // ------------------------------------------------
 // SECTION A: CONFIGURATION
-// WHY: Keep the API URL in ONE place.
-//      If your backend URL changes, update only here.
 // ------------------------------------------------
 const API_BASE_URL = 'http://localhost:8080/api/auth';
 
 
 // ------------------------------------------------
 // SECTION B: GET REFERENCES TO HTML ELEMENTS
-// WHY: We grab all the elements we need ONCE at
-//      the top. This is faster than searching for
-//      them every time inside event listeners.
 // ------------------------------------------------
 
 // --- Modal overlays ---
@@ -76,8 +71,6 @@ const toggleRegisterPwd     = document.getElementById('toggleRegisterPassword');
 
 // ------------------------------------------------
 // SECTION C: MODAL OPEN / CLOSE HELPERS
-// WHY: We reuse these functions many times.
-//      Functions keep code DRY (Don't Repeat Yourself).
 // ------------------------------------------------
 
 /**
@@ -130,7 +123,6 @@ function clearAllErrors(container) {
 
 // ------------------------------------------------
 // SECTION D: WIRE UP OPEN / CLOSE / SWITCH BUTTONS
-// WHY: Connect all the button clicks to our helper functions.
 // ------------------------------------------------
 
 // Navbar: Login button → open login modal
@@ -161,7 +153,6 @@ switchToLogin.addEventListener('click', () => {
 });
 
 // Close modal when clicking the dark overlay OUTSIDE the box
-// WHY: Click the background behind the popup → it closes
 loginModal.addEventListener('click', (e) => {
   // e.target is what was clicked
   // If they clicked the overlay itself (not the box inside), close
@@ -173,7 +164,6 @@ registerModal.addEventListener('click', (e) => {
 });
 
 // Close modal when pressing Escape key
-// WHY: Standard UX pattern — users expect Escape to close popups
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (loginModal.classList.contains('active'))    closeModal(loginModal);
@@ -184,8 +174,6 @@ document.addEventListener('keydown', (e) => {
 
 // ------------------------------------------------
 // SECTION E: PASSWORD SHOW/HIDE TOGGLE
-// WHY: Lets users verify what they typed.
-//      We change input type between "password" and "text".
 // ------------------------------------------------
 
 /**
@@ -207,8 +195,6 @@ setupPasswordToggle(registerPasswordInput, toggleRegisterPwd);
 
 // ------------------------------------------------
 // SECTION F: VALIDATION HELPERS
-// WHY: We validate BEFORE sending to the server.
-//      This gives instant feedback without a network call.
 // ------------------------------------------------
 
 /**
@@ -339,9 +325,6 @@ function validateRegisterForm() {
 
 // ------------------------------------------------
 // SECTION G: LOGIN FORM — API CALL
-// WHY: Sends email + password to POST /login.
-//      On success → saves JWT → redirects.
-//      On failure → shows error message.
 // ------------------------------------------------
 loginForm.addEventListener('submit', async (e) => {
   // Prevent the browser from reloading the page
@@ -355,7 +338,6 @@ loginForm.addEventListener('submit', async (e) => {
   const password = loginPasswordInput.value;
 
   // Disable button and show loading text
-  // WHY: Prevent double-submit while waiting for server
   loginSubmitBtn.disabled    = true;
   loginSubmitBtn.textContent = 'Logging in...';
 
@@ -377,7 +359,7 @@ loginForm.addEventListener('submit', async (e) => {
     const data = await response.json();
     console.log("Login Response Data:", data); // Debug log to see token field name
 
-    // If server returned an error (status 4xx or 5xx)
+    // If server returned an error
     if (!response.ok) {
       // Use server's message if available, otherwise show generic error
       throw new Error(data.message || 'Login failed. Please check your credentials.');
@@ -429,9 +411,6 @@ loginForm.addEventListener('submit', async (e) => {
 
 // ------------------------------------------------
 // SECTION H: REGISTER FORM — API CALL
-// WHY: Sends all fields to POST /register.
-//      On success → shows success message → switches to login.
-//      On failure → shows error message.
 // ------------------------------------------------
 registerForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -517,9 +496,6 @@ registerForm.addEventListener('submit', async (e) => {
 
 // ------------------------------------------------
 // SECTION I: AUTO-REDIRECT IF ALREADY LOGGED IN
-// WHY: If the user already has a JWT in localStorage,
-//      there's no need to see the landing page —
-//      send them straight to the dashboard.
 // ------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
   // If a token already exists, skip the landing page and go straight to the
@@ -538,8 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ------------------------------------------------
 // SECTION J: CLEAR FIELD ERRORS ON USER INPUT
-// WHY: As soon as the user starts correcting a field,
-//      remove the red border — better UX.
 // ------------------------------------------------
 loginEmailInput.addEventListener('input', () =>
   clearFieldError(loginEmailInput, loginEmailError));

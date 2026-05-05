@@ -97,8 +97,6 @@ let allEvents = [];
 
 // ================================================
 // B. AUTH GUARD
-// WHY: Dashboard is protected. If no JWT token
-//      exists in localStorage, send user to login.
 // ================================================
 if (!token) {
   window.location.href = 'index.html';
@@ -247,8 +245,6 @@ function clearFieldError(inputEl, errorElId) {
 
 // ================================================
 // F. API HELPER
-// WHY: All API calls need the same JWT header.
-//      One helper prevents repetition.
 // ================================================
 
 /**
@@ -491,11 +487,7 @@ createEventForm.addEventListener('submit', async (e) => {
   };
 
   try {
-    // Your backend: POST /api/events  (API already ends with /events, so path is '')
-    // const res = await apiFetch('', {
-    //   method: 'POST',
-    //   body: JSON.stringify(body)
-    // });
+    // Your backend: POST /api/events
     const res = await apiFetch('/events', {
       method: 'POST',
       body: JSON.stringify(body)
@@ -509,11 +501,6 @@ createEventForm.addEventListener('submit', async (e) => {
       console.log("Status Code:", res.status);
       throw new Error(errorText || 'Failed to create event');
     }
-
-    // if (!res.ok) {
-    //   const err = await res.json().catch(() => ({}));
-    //   throw new Error(err.message || 'Failed to create event');
-    // }
 
     // Success
     closeModal(createEventModal);
