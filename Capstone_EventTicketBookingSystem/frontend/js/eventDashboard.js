@@ -391,13 +391,13 @@ function updateStats(events) {
 /** Fetches all events from GET /api/events/upcoming and renders them. */
 async function loadEvents() {
   try {
-    // Your backend: GET /api/events (Organizer sees all, customer sees upcoming)
+
     const res = await apiFetch('/events');
 
     if (!res.ok) {
       if (res.status === 401) {
       console.log("Unauthorized access - token may be invalid or expired. Redirecting to login.");
-       //logout(); return;
+       logout(); return;
         }
       throw new Error('Failed to load events');
     }

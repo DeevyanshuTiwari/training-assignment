@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nucleusTeq.user_service.dto.AuthResponse;
 import com.nucleusTeq.user_service.dto.LoginRequest;
 import com.nucleusTeq.user_service.dto.RegisterRequest;
+import com.nucleusTeq.user_service.exception.BadRequestException;
+import com.nucleusTeq.user_service.exception.GlobalExceptionHandler;
 import com.nucleusTeq.user_service.service.UserService;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +43,9 @@ public class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         registerRequest = new RegisterRequest();
         registerRequest.setFullName("Test User");
@@ -91,7 +95,7 @@ public class AuthControllerTest {
     @Test
     void testRegisterBadRequest() throws Exception {
         when(userService.register(any(RegisterRequest.class)))
-                .thenThrow(new IllegalArgumentException("Email already exists"));
+                .thenThrow(new BadRequestException("Email already exists"));
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +107,7 @@ public class AuthControllerTest {
     @Test
     void testLoginBadRequest() throws Exception {
         when(userService.login(any(LoginRequest.class)))
-                .thenThrow(new IllegalArgumentException("Invalid credentials"));
+                .thenThrow(new BadRequestException("Invalid credentials"));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

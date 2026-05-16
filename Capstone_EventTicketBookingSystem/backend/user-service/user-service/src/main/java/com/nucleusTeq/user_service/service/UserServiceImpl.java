@@ -11,6 +11,7 @@ import com.nucleusTeq.user_service.dto.AuthResponse;
 import com.nucleusTeq.user_service.dto.LoginRequest;
 import com.nucleusTeq.user_service.dto.RegisterRequest;
 import com.nucleusTeq.user_service.entity.User;
+import com.nucleusTeq.user_service.exception.BadRequestException;
 import com.nucleusTeq.user_service.repository.UserRepository;
 import com.nucleusTeq.user_service.security.JwtService;
 
@@ -35,10 +36,10 @@ public class UserServiceImpl implements UserService {
         String normalizedPhone = normalizePhone(request.getPhone());
 
         if (userRepository.existsByEmail(normalizedEmail)) {
-            throw new IllegalArgumentException("Email is already registered.");
+            throw new BadRequestException("Email is already registered.");
         }
         if (userRepository.existsByPhone(normalizedPhone)) {
-            throw new IllegalArgumentException("Phone number is already registered.");
+            throw new BadRequestException("Phone number is already registered.");
         }
 
         User user = new User();
@@ -62,12 +63,12 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findByEmail(normalizedEmail);
 
         if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("Invalid email or password.");
+            throw new BadRequestException("Invalid email or password.");
         }
 
         User user = userOptional.get();
         if (!passwordEncoder.matches(request.getPassword().trim(), user.getPassword())) {
-            throw new IllegalArgumentException("Invalid email or password.");
+            throw new BadRequestException("Invalid email or password.");
         }
 
         user.setLastActivityAt(LocalDateTime.now());
@@ -78,43 +79,43 @@ public class UserServiceImpl implements UserService {
 
     private void validateRegisterRequest(RegisterRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException("Request body is required.");
+            throw new BadRequestException("Request body is required.");
         }
         if (isBlank(request.getFullName())) {
-            throw new IllegalArgumentException("Name is required.");
+            throw new BadRequestException("Name is required.");
         }
         if (isBlank(request.getEmail()) || !request.getEmail().trim().matches("^[A-Za-z0-9._%+-]+@gmail\\.com$")) {
-            throw new IllegalArgumentException("Email must be in valid format and end with @gmail.com.");
+            throw new BadRequestException("Email must be in valid format and end with @gmail.com.");
         }
         if (isBlank(request.getPassword())
                 || !request.getPassword().trim().matches("^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,12}$")) {
-            throw new IllegalArgumentException(
+            throw new BadRequestException(
                     "Password must be 8 to 12 characters and include at least one uppercase letter and one special character.");
         }
         if (isBlank(request.getPhone())) {
-            throw new IllegalArgumentException("Phone number is required.");
+            throw new BadRequestException("Phone number is required.");
         }
         if (isBlank(request.getRole())) {
-            throw new IllegalArgumentException("Role is required (CUSTOMER or ORGANIZER).");
+            throw new BadRequestException("Role is required (CUSTOMER or ORGANIZER).");
         }
     }
 
     private void validateLoginRequest(LoginRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException("Request body is required.");
+            throw new BadRequestException("Request body is required.");
         }
         if (isBlank(request.getEmail())) {
-            throw new IllegalArgumentException("Email is required.");
+            throw new BadRequestException("Email is required.");
         }
         if (isBlank(request.getPassword())) {
-            throw new IllegalArgumentException("Password is required.");
+            throw new BadRequestException("Password is required.");
         }
     }
 
     private String normalizeRole(String role) {
         String normalizedRole = role.trim().toUpperCase(Locale.ROOT);
         if (!"CUSTOMER".equals(normalizedRole) && !"ORGANIZER".equals(normalizedRole)) {
-            throw new IllegalArgumentException("Role must be CUSTOMER or ORGANIZER.");
+            throw new BadRequestException("Role must be CUSTOMER or ORGANIZER.");
         }
         return normalizedRole;
     }
@@ -122,7 +123,7 @@ public class UserServiceImpl implements UserService {
     private String normalizeFullName(String fullName) {
         String normalizedName = fullName.trim();
         if (!normalizedName.matches("^[A-Za-z ]{2,}$")) {
-            throw new IllegalArgumentException("Name must be at least 2 characters and contain alphabets only.");
+            throw new BadRequestException("Name must be at least 2 characters and contain alphabets only.");
         }
         return normalizedName;
     }
@@ -130,7 +131,7 @@ public class UserServiceImpl implements UserService {
     private String normalizePhone(String phone) {
         String normalizedPhone = phone.trim();
         if (!normalizedPhone.matches("^\\d{10}$")) {
-            throw new IllegalArgumentException("Phone must be exactly 10 digits and numeric only.");
+            throw new BadRequestException("Phone must be exactly 10 digits and numeric only.");
         }
         return normalizedPhone;
     }

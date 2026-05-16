@@ -22,6 +22,7 @@ import com.nucleusTeq.user_service.dto.AuthResponse;
 import com.nucleusTeq.user_service.dto.LoginRequest;
 import com.nucleusTeq.user_service.dto.RegisterRequest;
 import com.nucleusTeq.user_service.entity.User;
+import com.nucleusTeq.user_service.exception.BadRequestException;
 import com.nucleusTeq.user_service.repository.UserRepository;
 import com.nucleusTeq.user_service.security.JwtService;
 
@@ -93,7 +94,7 @@ public class UserServiceTest {
         when(userRepository.existsByEmail("john@gmail.com")).thenReturn(true);
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             userService.register(validRegisterRequest);
         });
 
@@ -127,7 +128,7 @@ public class UserServiceTest {
         when(passwordEncoder.matches("Password@123", "encodedPassword123")).thenReturn(false);
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             userService.login(validLoginRequest);
         });
 
@@ -138,31 +139,31 @@ public class UserServiceTest {
     @Test
     void testRegister_ValidationFailures_ThrowsException() {
         // Missing Request
-        assertThrows(IllegalArgumentException.class, () -> userService.register(null));
+        assertThrows(BadRequestException.class, () -> userService.register(null));
 
         // Invalid Name
         validRegisterRequest.setFullName("A");
-        assertThrows(IllegalArgumentException.class, () -> userService.register(validRegisterRequest));
+        assertThrows(BadRequestException.class, () -> userService.register(validRegisterRequest));
 
         // Invalid Email
         validRegisterRequest.setFullName("John Doe");
         validRegisterRequest.setEmail("invalid-email");
-        assertThrows(IllegalArgumentException.class, () -> userService.register(validRegisterRequest));
+        assertThrows(BadRequestException.class, () -> userService.register(validRegisterRequest));
 
         // Invalid Password
         validRegisterRequest.setEmail("john@gmail.com");
         validRegisterRequest.setPassword("weak");
-        assertThrows(IllegalArgumentException.class, () -> userService.register(validRegisterRequest));
+        assertThrows(BadRequestException.class, () -> userService.register(validRegisterRequest));
 
         // Invalid Phone
         validRegisterRequest.setPassword("Password@123");
         validRegisterRequest.setPhone("123");
-        assertThrows(IllegalArgumentException.class, () -> userService.register(validRegisterRequest));
+        assertThrows(BadRequestException.class, () -> userService.register(validRegisterRequest));
 
         // Invalid Role
         validRegisterRequest.setPhone("1234567890");
         validRegisterRequest.setRole("INVALID_ROLE");
-        assertThrows(IllegalArgumentException.class, () -> userService.register(validRegisterRequest));
+        assertThrows(BadRequestException.class, () -> userService.register(validRegisterRequest));
     }
     // 6. Duplicate Phone Registration (Failure)
     @Test
@@ -172,7 +173,7 @@ public class UserServiceTest {
         when(userRepository.existsByPhone("1234567890")).thenReturn(true);
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        BadRequestException exception = assertThrows(BadRequestException.class, () -> {
             userService.register(validRegisterRequest);
         });
 
@@ -183,15 +184,15 @@ public class UserServiceTest {
     @Test
     void testLogin_ValidationFailures_ThrowsException() {
         // Missing Request
-        assertThrows(IllegalArgumentException.class, () -> userService.login(null));
+        assertThrows(BadRequestException.class, () -> userService.login(null));
 
         // Missing Email
         validLoginRequest.setEmail("");
-        assertThrows(IllegalArgumentException.class, () -> userService.login(validLoginRequest));
+        assertThrows(BadRequestException.class, () -> userService.login(validLoginRequest));
 
         // Missing Password
         validLoginRequest.setEmail("john@gmail.com");
         validLoginRequest.setPassword(null);
-        assertThrows(IllegalArgumentException.class, () -> userService.login(validLoginRequest));
+        assertThrows(BadRequestException.class, () -> userService.login(validLoginRequest));
     }
 }

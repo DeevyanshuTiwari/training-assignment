@@ -2,7 +2,11 @@ package com.nucleusTeq.user_service.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.nucleusTeq.user_service.dto.AuthResponse;
 import com.nucleusTeq.user_service.dto.LoginRequest;
@@ -32,9 +36,4 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<AuthResponse> handleBadRequest(IllegalArgumentException ex) {
-        AuthResponse errorResponse = new AuthResponse(ex.getMessage(), null, null, null);
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
 }
