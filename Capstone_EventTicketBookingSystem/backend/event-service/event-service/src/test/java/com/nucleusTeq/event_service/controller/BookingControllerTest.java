@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -33,6 +32,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nucleusTeq.event_service.dto.BookingRequest;
 import com.nucleusTeq.event_service.dto.BookingResponse;
+import com.nucleusTeq.event_service.exception.BadRequestException;
+import com.nucleusTeq.event_service.exception.GlobalExceptionHandler;
 import com.nucleusTeq.event_service.service.BookingService;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +58,9 @@ public class BookingControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        mockMvc = MockMvcBuilders.standaloneSetup(bookingController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(bookingController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         bookingRequest = new BookingRequest();
         bookingRequest.setEventId(1L);
@@ -111,13 +114,13 @@ public class BookingControllerTest {
     @Test
     void testHandleIllegalArgumentException() throws Exception {
         when(bookingService.bookTickets(anyString(), any(BookingRequest.class)))
-                .thenThrow(new IllegalArgumentException("Invalid booking"));
+                .thenThrow(new BadRequestException("Invalid booking"));
 
         mockMvc.perform(post("/api/bookings").principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookingRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid booking"));
+                .andExpect(jsonPath("$.message").value("Invalid booking"));
     }
 
     @Test
@@ -129,7 +132,7 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookingRequest)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("High traffic on this event. Please refresh and try again."));
+                .andExpect(jsonPath("$.message").value("This resource was modified by someone else concurrently. Please refresh and try again."));
     }
 
     @Test
@@ -141,7 +144,7 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookingRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid data submitted. Ensure values (e.g. seats, price) meet constraints."));
+                .andExpect(jsonPath("$.message").value("Invalid data submitted. Ensure values meet constraints."));
     }
 
     @Test
@@ -153,6 +156,6 @@ public class BookingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookingRequest)))
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().string("Server Error: Something went wrong"));
+                .andExpect(jsonPath("$.message").value("Server Error: Something went wrong"));
     }
 }

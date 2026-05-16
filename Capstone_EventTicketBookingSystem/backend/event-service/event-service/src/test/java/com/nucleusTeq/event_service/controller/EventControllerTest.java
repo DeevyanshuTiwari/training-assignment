@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nucleusTeq.event_service.dto.EventRequest;
 import com.nucleusTeq.event_service.dto.EventResponse;
+import com.nucleusTeq.event_service.exception.BadRequestException;
+import com.nucleusTeq.event_service.exception.GlobalExceptionHandler;
 import com.nucleusTeq.event_service.service.EventService;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +53,9 @@ public class EventControllerTest {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        mockMvc = MockMvcBuilders.standaloneSetup(eventController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(eventController)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
 
         eventRequest = new EventRequest();
         eventRequest.setTitle("Test Event");
@@ -130,13 +133,13 @@ public class EventControllerTest {
     @Test
     void testHandleIllegalArgumentException() throws Exception {
         when(eventService.createEvent(any(EventRequest.class)))
-                .thenThrow(new IllegalArgumentException("Invalid event"));
+                .thenThrow(new BadRequestException("Invalid event"));
 
         mockMvc.perform(post("/api/events")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid event"));
+                .andExpect(jsonPath("$.message").value("Invalid event"));
     }
 
     @Test
@@ -148,7 +151,7 @@ public class EventControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventRequest)))
                 .andExpect(status().isConflict())
-                .andExpect(content().string("This event was modified by someone else concurrently. Please refresh and try again."));
+                .andExpect(jsonPath("$.message").value("This resource was modified by someone else concurrently. Please refresh and try again."));
     }
 
     @Test
@@ -160,6 +163,6 @@ public class EventControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(eventRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid data submitted. Ensure values meet database constraints."));
+                .andExpect(jsonPath("$.message").value("Invalid data submitted. Ensure values meet constraints."));
     }
 }

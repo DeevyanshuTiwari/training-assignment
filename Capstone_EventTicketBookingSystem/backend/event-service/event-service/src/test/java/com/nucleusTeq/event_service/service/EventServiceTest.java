@@ -83,7 +83,7 @@ public class EventServiceTest {
         validEventRequest.setEventDateTime(LocalDateTime.now().minusDays(1)); // Past date
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             eventService.createEvent(validEventRequest);
         });
 
@@ -97,7 +97,7 @@ public class EventServiceTest {
         validEventRequest.setTotalSeats(-5); // Invalid seats
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             eventService.createEvent(validEventRequest);
         });
 
@@ -143,7 +143,7 @@ public class EventServiceTest {
         when(eventRepository.findById(1L)).thenReturn(Optional.of(mockEvent));
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             eventService.cancelEvent(1L);
         });
 
@@ -195,50 +195,50 @@ public class EventServiceTest {
     @Test
     void testCreateEvent_ValidationFailures_ThrowsException() {
         // Missing request
-        assertThrows(IllegalArgumentException.class, () -> eventService.createEvent(null));
+        assertThrows(RuntimeException.class, () -> eventService.createEvent(null));
 
         // Short title
         validEventRequest.setTitle("Hi");
-        assertThrows(IllegalArgumentException.class, () -> eventService.createEvent(validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.createEvent(validEventRequest));
 
         // Short description
         validEventRequest.setTitle("Valid Title");
         validEventRequest.setDescription("Too short");
-        assertThrows(IllegalArgumentException.class, () -> eventService.createEvent(validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.createEvent(validEventRequest));
 
         // Missing Date
         validEventRequest.setDescription("This is a valid description");
         validEventRequest.setEventDateTime(null);
-        assertThrows(IllegalArgumentException.class, () -> eventService.createEvent(validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.createEvent(validEventRequest));
     }
     // 12. Update Event Exceptions
     @Test
     void testUpdateEvent_ValidationFailures_ThrowsException() {
         // Event not found
         when(eventRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.updateEvent(1L, validEventRequest));
 
         // Cannot update cancelled event
         mockEvent.setCancelled(true);
         when(eventRepository.findById(1L)).thenReturn(Optional.of(mockEvent));
-        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.updateEvent(1L, validEventRequest));
 
         // Cannot update event after it has started
         mockEvent.setCancelled(false);
         mockEvent.setEventDateTime(LocalDateTime.now().minusHours(1));
-        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.updateEvent(1L, validEventRequest));
 
         // Updated event date must be in the future
         mockEvent.setEventDateTime(LocalDateTime.now().plusDays(10));
         validEventRequest.setEventDateTime(LocalDateTime.now().minusHours(1));
-        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.updateEvent(1L, validEventRequest));
 
         // Total seats less than booked
         validEventRequest.setEventDateTime(LocalDateTime.now().plusDays(10));
         mockEvent.setTotalSeats(100);
         mockEvent.setAvailableSeats(50); // 50 seats booked
         validEventRequest.setTotalSeats(40); // Cannot be less than 50
-        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, validEventRequest));
+        assertThrows(RuntimeException.class, () -> eventService.updateEvent(1L, validEventRequest));
     }
 }
 

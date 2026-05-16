@@ -11,6 +11,8 @@ import com.nucleusTeq.event_service.dto.BookingRequest;
 import com.nucleusTeq.event_service.dto.BookingResponse;
 import com.nucleusTeq.event_service.entity.Booking;
 import com.nucleusTeq.event_service.entity.Event;
+import com.nucleusTeq.event_service.exception.BadRequestException;
+import com.nucleusTeq.event_service.exception.ResourceNotFoundException;
 import com.nucleusTeq.event_service.repository.BookingRepository;
 import com.nucleusTeq.event_service.repository.EventRepository;
 
@@ -29,25 +31,25 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponse bookTickets(String userEmail, BookingRequest request) {
         if (isBlank(userEmail)) {
-            throw new IllegalArgumentException("User email is required.");
+            throw new BadRequestException("User email is required.");
         }
         validateBookingRequest(request);
 
         Event event = eventRepository.findById(request.getEventId())
-                .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
 
         if (event.getCancelled()) {
-            throw new IllegalArgumentException("Cannot book tickets for a cancelled event.");
+            throw new BadRequestException("Cannot book tickets for a cancelled event.");
         }
         if (!event.getEventDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Cannot book tickets after event start time.");
+            throw new BadRequestException("Cannot book tickets after event start time.");
         }
         if (event.getAvailableSeats() < request.getSeatsRequested()) {
-            throw new IllegalArgumentException("Not enough seats available.");
+            throw new BadRequestException("Not enough seats available.");
         }
 
         if (!simulatePayment(userEmail, request.getSeatsRequested())) {
-            throw new IllegalArgumentException("Payment failed. Booking not completed.");
+            throw new BadRequestException("Payment failed. Booking not completed.");
         }
 
         // Prevent overbooking by reducing available seats in the same transaction.
@@ -71,23 +73,23 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponse cancelBooking(String userEmail, Long bookingId) {
         if (isBlank(userEmail)) {
-            throw new IllegalArgumentException("User email is required.");
+            throw new BadRequestException("User email is required.");
         }
         Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new IllegalArgumentException("Booking not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found."));
 
         if (!booking.getUserEmail().equalsIgnoreCase(userEmail.trim())) {
-            throw new IllegalArgumentException("You can cancel only your own booking.");
+            throw new BadRequestException("You can cancel only your own booking.");
         }
         if ("CANCELLED".equalsIgnoreCase(booking.getBookingStatus())) {
-            throw new IllegalArgumentException("Booking is already cancelled.");
+            throw new BadRequestException("Booking is already cancelled.");
         }
         if (!booking.getEvent().getEventDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Cannot cancel booking after event start time.");
+            throw new BadRequestException("Cannot cancel booking after event start time.");
         }
         LocalDateTime cancelDeadline = booking.getEvent().getEventDateTime().minusHours(3);
         if (LocalDateTime.now().isAfter(cancelDeadline)) {
-            throw new IllegalArgumentException("Cancellations are only allowed up to 3 hours before the event starts.");
+            throw new BadRequestException("Cancellations are only allowed up to 3 hours before the event starts.");
         }
 
         booking.setBookingStatus("CANCELLED");
@@ -102,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getBookingHistory(String userEmail) {
         if (isBlank(userEmail)) {
-            throw new IllegalArgumentException("User email is required.");
+            throw new BadRequestException("User email is required.");
         }
         List<Booking> bookings = bookingRepository.findByUserEmailOrderByBookingTimeDesc(userEmail.trim().toLowerCase());
         return bookings.stream().map(this::mapToBookingResponse).collect(Collectors.toList());
@@ -111,7 +113,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingResponse> getBookingsByEventId(Long eventId) {
         if (eventId == null) {
-            throw new IllegalArgumentException("Event ID is required.");
+            throw new BadRequestException("Event ID is required.");
         }
         List<Booking> bookings = bookingRepository.findByEventId(eventId);
         return bookings.stream().map(this::mapToBookingResponse).collect(Collectors.toList());
@@ -119,16 +121,16 @@ public class BookingServiceImpl implements BookingService {
 
     private void validateBookingRequest(BookingRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException("Request body is required.");
+            throw new BadRequestException("Request body is required.");
         }
         if (request.getEventId() == null) {
-            throw new IllegalArgumentException("Event ID is required.");
+            throw new BadRequestException("Event ID is required.");
         }
         if (request.getSeatsRequested() == null || request.getSeatsRequested() <= 0) {
-            throw new IllegalArgumentException("Seats requested must be greater than 0.");
+            throw new BadRequestException("Seats requested must be greater than 0.");
         }
         if (isBlank(request.getUserName())) {
-            throw new IllegalArgumentException("User name is required.");
+            throw new BadRequestException("User name is required.");
         }
     }
 

@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nucleusTeq.event_service.dto.EventRequest;
 import com.nucleusTeq.event_service.dto.EventResponse;
 import com.nucleusTeq.event_service.entity.Event;
+import com.nucleusTeq.event_service.exception.BadRequestException;
+import com.nucleusTeq.event_service.exception.ResourceNotFoundException;
 import com.nucleusTeq.event_service.repository.EventRepository;
 
 @Service
@@ -26,7 +28,7 @@ public class EventServiceImpl implements EventService {
     public EventResponse createEvent(EventRequest request) {
         validateEventRequest(request);
         if (!request.getEventDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Event date/time must be in the future.");
+            throw new BadRequestException("Event date/time must be in the future.");
         }
 
         Event event = new Event();
@@ -59,7 +61,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventResponse getEventById(Long eventId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
         return mapToEventResponse(event);
     }
 
@@ -68,19 +70,19 @@ public class EventServiceImpl implements EventService {
     public EventResponse updateEvent(Long eventId, EventRequest request) {
         validateEventRequest(request);
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
 
         if (event.getCancelled()) {
-            throw new IllegalArgumentException("Cannot update a cancelled event.");
+            throw new BadRequestException("Cannot update a cancelled event.");
         }
         if (!event.getEventDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Cannot update event after it has started.");
+            throw new BadRequestException("Cannot update event after it has started.");
         }
         if (!request.getEventDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Updated event date/time must be in the future.");
+            throw new BadRequestException("Updated event date/time must be in the future.");
         }
         if (request.getTotalSeats() < (event.getTotalSeats() - event.getAvailableSeats())) {
-            throw new IllegalArgumentException("Total seats cannot be less than already booked seats.");
+            throw new BadRequestException("Total seats cannot be less than already booked seats.");
         }
 
         int alreadyBookedSeats = event.getTotalSeats() - event.getAvailableSeats();
@@ -101,10 +103,10 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public EventResponse cancelEvent(Long eventId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
 
         if (!event.getEventDateTime().isAfter(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Cannot cancel event after it has started.");
+            throw new BadRequestException("Cannot cancel event after it has started.");
         }
         event.setCancelled(true);
 
@@ -114,25 +116,25 @@ public class EventServiceImpl implements EventService {
 
     private void validateEventRequest(EventRequest request) {
         if (request == null) {
-            throw new IllegalArgumentException("Request body is required.");
+            throw new BadRequestException("Request body is required.");
         }
         if (isBlank(request.getTitle()) || request.getTitle().trim().length() < 3) {
-            throw new IllegalArgumentException("Event title must be at least 3 characters.");
+            throw new BadRequestException("Event title must be at least 3 characters.");
         }
         if (isBlank(request.getDescription()) || request.getDescription().trim().length() < 10) {
-            throw new IllegalArgumentException("Event description must be at least 10 characters.");
+            throw new BadRequestException("Event description must be at least 10 characters.");
         }
         if (isBlank(request.getVenue()) || request.getVenue().trim().length() < 3) {
-            throw new IllegalArgumentException("Venue must be at least 3 characters.");
+            throw new BadRequestException("Venue must be at least 3 characters.");
         }
         if (request.getEventDateTime() == null) {
-            throw new IllegalArgumentException("Event date/time is required.");
+            throw new BadRequestException("Event date/time is required.");
         }
         if (request.getTotalSeats() == null || request.getTotalSeats() <= 0) {
-            throw new IllegalArgumentException("Total seats must be greater than 0.");
+            throw new BadRequestException("Total seats must be greater than 0.");
         }
         if (request.getPrice() == null || request.getPrice() < 0) {
-            throw new IllegalArgumentException("Price must be 0 or greater.");
+            throw new BadRequestException("Price must be 0 or greater.");
         }
     }
 

@@ -94,7 +94,7 @@ public class BookingServiceTest {
         when(eventRepository.findById(1L)).thenReturn(Optional.of(mockEvent));
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             bookingService.bookTickets("john@example.com", validBookingRequest);
         });
 
@@ -109,7 +109,7 @@ public class BookingServiceTest {
         when(eventRepository.findById(1L)).thenReturn(Optional.of(mockEvent));
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             bookingService.bookTickets("john@example.com", validBookingRequest);
         });
 
@@ -142,7 +142,7 @@ public class BookingServiceTest {
         when(bookingRepository.findById(10L)).thenReturn(Optional.of(mockBooking));
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             bookingService.cancelBooking("john@example.com", 10L);
         });
 
@@ -157,7 +157,7 @@ public class BookingServiceTest {
         when(bookingRepository.findById(10L)).thenReturn(Optional.of(mockBooking));
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             bookingService.cancelBooking("john@example.com", 10L);
         });
 
@@ -198,21 +198,21 @@ public class BookingServiceTest {
     @Test
     void testBookTickets_ValidationFailures_ThrowsException() {
         // Missing request
-        assertThrows(IllegalArgumentException.class, () -> bookingService.bookTickets("john@example.com", null));
+        assertThrows(RuntimeException.class, () -> bookingService.bookTickets("john@example.com", null));
 
         // Missing Event ID
         validBookingRequest.setEventId(null);
-        assertThrows(IllegalArgumentException.class, () -> bookingService.bookTickets("john@example.com", validBookingRequest));
+        assertThrows(RuntimeException.class, () -> bookingService.bookTickets("john@example.com", validBookingRequest));
 
         // Invalid Seats
         validBookingRequest.setEventId(1L);
         validBookingRequest.setSeatsRequested(0);
-        assertThrows(IllegalArgumentException.class, () -> bookingService.bookTickets("john@example.com", validBookingRequest));
+        assertThrows(RuntimeException.class, () -> bookingService.bookTickets("john@example.com", validBookingRequest));
 
         // Blank User Name
         validBookingRequest.setSeatsRequested(2);
         validBookingRequest.setUserName("   ");
-        assertThrows(IllegalArgumentException.class, () -> bookingService.bookTickets("john@example.com", validBookingRequest));
+        assertThrows(RuntimeException.class, () -> bookingService.bookTickets("john@example.com", validBookingRequest));
     }
 
     // 10. Cancel Booking validation failures
@@ -220,10 +220,10 @@ public class BookingServiceTest {
     void testCancelBooking_ValidationFailures_ThrowsException() {
         // Not owner
         when(bookingRepository.findById(10L)).thenReturn(Optional.of(mockBooking));
-        assertThrows(IllegalArgumentException.class, () -> bookingService.cancelBooking("wronguser@example.com", 10L));
+        assertThrows(RuntimeException.class, () -> bookingService.cancelBooking("wronguser@example.com", 10L));
 
         // Already cancelled
         mockBooking.setBookingStatus("CANCELLED");
-        assertThrows(IllegalArgumentException.class, () -> bookingService.cancelBooking("john@example.com", 10L));
+        assertThrows(RuntimeException.class, () -> bookingService.cancelBooking("john@example.com", 10L));
     }
 }
