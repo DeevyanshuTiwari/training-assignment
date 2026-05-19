@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complete Booking — Eventify</title>
+    <link rel="stylesheet" href="css/customer.css" />
+</head>
+
+<body>
+
+<!-- Atmospheric background -->
+<div class="noise-overlay"></div>
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+
+<!-- ================================================
+     NAVBAR
+================================================ -->
+<header class="c-navbar">
+    <div class="c-navbar-inner">
+        <a href="customer-dashboard.html" class="c-logo">
+            <span class="c-logo-icon">✦</span>
+            <span class="c-logo-text">Event<span class="c-logo-accent">ify</span></span>
+        </a>
+        <nav class="c-nav-links">
+            <a href="customer-dashboard.html" class="c-nav-link">Home</a>
+            <a href="my-bookings.html" class="c-nav-link">My Bookings</a>
+        </nav>
+        <div class="c-nav-right">
+            <div class="c-user-chip">
+                <div class="c-user-avatar" id="navAvatar">U</div>
+                <span class="c-user-name" id="navUserName">Customer</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+</header>
+
+
+<!-- ================================================
+     MAIN CONTENT
+================================================ -->
+<main class="c-page">
+    <div class="c-container-sm">
+
+        <!-- Page heading -->
+        <div class="c-section-header">
+            <h1 class="c-section-title">📋 Order Summary</h1>
+            <p class="c-section-sub">Review your booking before completing</p>
+        </div>
+
+        <!-- Alert box -->
+        <div class="c-alert" id="paymentAlert"></div>
+
+        <!-- ==========================================
+             PAYMENT LAYOUT: 2 columns
+             Left: order summary | Right: mock payment UI
+        ========================================== -->
+        <div class="c-payment-wrap">
+
+            <!-- LEFT: Order Summary Card -->
+            <div class="c-order-card">
+                <h2 class="c-order-title">🎟️ Booking Summary</h2>
+
+                <div class="c-order-rows">
+                    <div class="c-order-row">
+                        <span class="label">Event</span>
+                        <span class="val" id="sumEventTitle">—</span>
+                    </div>
+                    <div class="c-order-row">
+                        <span class="label">📅 Date</span>
+                        <span class="val" id="sumDate">—</span>
+                    </div>
+                    <div class="c-order-row">
+                        <span class="label">📍 Venue</span>
+                        <span class="val" id="sumVenue">—</span>
+                    </div>
+                    <div class="c-order-row">
+                        <span class="label">🎫 Tickets</span>
+                        <span class="val" id="sumSeats">—</span>
+                    </div>
+                    <div class="c-order-row">
+                        <span class="label">💰 Price each</span>
+                        <span class="val" id="sumPrice">—</span>
+                    </div>
+                </div>
+
+                <hr class="c-order-divider" />
+
+                <div class="c-order-total-row">
+                    <span>Total Amount</span>
+                    <span id="sumTotal" style="color: var(--primary);">₹0</span>
+                </div>
+            </div>
+
+            <!-- RIGHT: Mock Payment Card -->
+            <div class="c-mock-payment-card">
+                <h2 class="c-mock-title">💳 Payment Details</h2>
+                <p class="c-mock-sub">This is a mock payment UI — no real charge will be made.</p>
+
+                <!-- Mock payment method icons -->
+                <div class="c-mock-icons">
+                    <div class="c-mock-icon">💳 Card</div>
+                    <div class="c-mock-icon">📱 UPI</div>
+                    <div class="c-mock-icon">🏦 Net Banking</div>
+                </div>
+
+                <!-- Fake "selected" method indicator -->
+                <div style="background:rgba(245,158,11,0.1); border-radius:12px; padding:14px; margin-bottom:22px; border:1px solid rgba(245,158,11,0.2);">
+                    <p style="font-size:.85rem; color:#F59E0B; font-weight:600;">✅ UPI selected (demo)</p>
+                    <p style="font-size:.8rem; color:#71717A; margin-top:4px;">Your tickets will be confirmed instantly after clicking below.</p>
+                </div>
+
+                <!-- Complete Booking button — triggers POST /api/bookings -->
+                <button class="btn btn-primary btn-full" id="completeBtn" style="font-size:1rem; padding:14px;">
+                    🎟️ Complete Booking
+                </button>
+
+                <!-- Back link -->
+                <button class="btn btn-ghost btn-full" id="payBackBtn" style="margin-top:10px;">
+                    ← Back to Event
+                </button>
+            </div>
+
+        </div><!-- /c-payment-wrap -->
+
+    </div><!-- /c-container-sm -->
+</main>
+
+
+<!-- ================================================
+     LOADING / SUCCESS OVERLAY
+     JS switches between spinner and checkmark states
+================================================ -->
+<div class="c-overlay" id="bookingOverlay">
+    <div class="c-overlay-box">
+
+        <!-- Loading state (shown first) -->
+        <div id="overlayLoading">
+            <div class="c-spinner"></div>
+            <p class="c-overlay-title">Processing...</p>
+            <p class="c-overlay-sub">Please wait while we confirm your booking.</p>
+        </div>
+
+        <!-- Success state (shown after API success) -->
+        <div id="overlaySuccess" style="display:none;">
+            <div class="c-success-icon">✅</div>
+            <p class="c-overlay-title">Booking Confirmed! 🎉</p>
+            <p class="c-overlay-sub">Your tickets have been booked successfully.</p>
+            <a href="my-bookings.html" class="btn btn-primary btn-full">View My Bookings</a>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- JS -->
+<script src="js/customer.js"></script>
+
+</body>
+</html>

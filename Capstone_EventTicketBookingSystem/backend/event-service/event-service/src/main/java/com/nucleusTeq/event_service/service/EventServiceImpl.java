@@ -1,0 +1,157 @@
+package com.nucleusTeq.event_service.service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.nucleusTeq.event_service.dto.EventRequest;
+import com.nucleusTeq.event_service.dto.EventResponse;
+import com.nucleusTeq.event_service.entity.Event;
+import com.nucleusTeq.event_service.exception.BadRequestException;
+import com.nucleusTeq.event_service.exception.ResourceNotFoundException;
+import com.nucleusTeq.event_service.repository.EventRepository;
+
+@Service
+public class EventServiceImpl implements EventService {
+
+    private final EventRepository eventRepository;
+
+    public EventServiceImpl(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
+    }
+
+    @Override
+    @Transactional
+    public EventResponse createEvent(EventRequest request) {
+        validateEventRequest(request);
+        if (!request.getEventDateTime().isAfter(LocalDateTime.now())) {
+            throw new BadRequestException("Event date/time must be in the future.");
+        }
+
+        Event event = new Event();
+        event.setTitle(request.getTitle().trim());
+        event.setDescription(request.getDescription().trim());
+        event.setVenue(request.getVenue().trim());
+        event.setEventDateTime(request.getEventDateTime());
+        event.setTotalSeats(request.getTotalSeats());
+        event.setAvailableSeats(request.getTotalSeats());
+        event.setPrice(request.getPrice());
+        event.setCancelled(false);
+
+        Event savedEvent = eventRepository.save(event);
+        return mapToEventResponse(savedEvent);
+    }
+
+    @Override
+    public List<EventResponse> getUpcomingEvents() {
+        List<Event> upcomingEvents = eventRepository
+                .findByCancelledFalseAndEventDateTimeAfterOrderByEventDateTimeAsc(LocalDateTime.now());
+        return upcomingEvents.stream().map(this::mapToEventResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventResponse> getAllEvents() {
+        List<Event> events = eventRepository.findAll();
+        return events.stream().map(this::mapToEventResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventResponse getEventById(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
+        return mapToEventResponse(event);
+    }
+
+    @Override
+    @Transactional
+    public EventResponse updateEvent(Long eventId, EventRequest request) {
+        validateEventRequest(request);
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
+
+        if (event.getCancelled()) {
+            throw new BadRequestException("Cannot update a cancelled event.");
+        }
+        if (!event.getEventDateTime().isAfter(LocalDateTime.now())) {
+            throw new BadRequestException("Cannot update event after it has started.");
+        }
+        if (!request.getEventDateTime().isAfter(LocalDateTime.now())) {
+            throw new BadRequestException("Updated event date/time must be in the future.");
+        }
+        if (request.getTotalSeats() < (event.getTotalSeats() - event.getAvailableSeats())) {
+            throw new BadRequestException("Total seats cannot be less than already booked seats.");
+        }
+
+        int alreadyBookedSeats = event.getTotalSeats() - event.getAvailableSeats();
+
+        event.setTitle(request.getTitle().trim());
+        event.setDescription(request.getDescription().trim());
+        event.setVenue(request.getVenue().trim());
+        event.setEventDateTime(request.getEventDateTime());
+        event.setTotalSeats(request.getTotalSeats());
+        event.setAvailableSeats(request.getTotalSeats() - alreadyBookedSeats);
+        event.setPrice(request.getPrice());
+
+        Event updatedEvent = eventRepository.save(event);
+        return mapToEventResponse(updatedEvent);
+    }
+
+    @Override
+    @Transactional
+    public EventResponse cancelEvent(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found."));
+
+        if (!event.getEventDateTime().isAfter(LocalDateTime.now())) {
+            throw new BadRequestException("Cannot cancel event after it has started.");
+        }
+        event.setCancelled(true);
+
+        Event cancelledEvent = eventRepository.save(event);
+        return mapToEventResponse(cancelledEvent);
+    }
+
+    private void validateEventRequest(EventRequest request) {
+        if (request == null) {
+            throw new BadRequestException("Request body is required.");
+        }
+        if (isBlank(request.getTitle()) || request.getTitle().trim().length() < 3) {
+            throw new BadRequestException("Event title must be at least 3 characters.");
+        }
+        if (isBlank(request.getDescription()) || request.getDescription().trim().length() < 10) {
+            throw new BadRequestException("Event description must be at least 10 characters.");
+        }
+        if (isBlank(request.getVenue()) || request.getVenue().trim().length() < 3) {
+            throw new BadRequestException("Venue must be at least 3 characters.");
+        }
+        if (request.getEventDateTime() == null) {
+            throw new BadRequestException("Event date/time is required.");
+        }
+        if (request.getTotalSeats() == null || request.getTotalSeats() <= 0) {
+            throw new BadRequestException("Total seats must be greater than 0.");
+        }
+        if (request.getPrice() == null || request.getPrice() < 0) {
+            throw new BadRequestException("Price must be 0 or greater.");
+        }
+    }
+
+    private EventResponse mapToEventResponse(Event event) {
+        return new EventResponse(
+                event.getId(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getVenue(),
+                event.getEventDateTime(),
+                event.getTotalSeats(),
+                event.getAvailableSeats(),
+                event.getCancelled(),
+                event.getPrice());
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+}
