@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eventify — Book Events Easily</title>
+    <link rel="stylesheet" href="css/index.css" />
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="navbar-container">
+
+        <!-- Logo -->
+        <div class="logo">
+            <span class="logo-icon">✦</span>
+            <span class="logo-text">Event<span class="logo-highlight">ify</span></span>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <nav class="nav-buttons">
+            <button id="openLoginBtn" class="btn btn-outline">Login</button>
+            <button id="openRegisterBtn" class="btn btn-primary">Register</button>
+        </nav>
+
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <div class="hero-content">
+
+            <!-- Badge above title -->
+            <span class="hero-badge"> #1 Event Booking Platform</span>
+
+            <!-- Main Heading -->
+            <h1 class="hero-title">
+                Book Your Next <br />
+                <span class="hero-highlight">Amazing Event</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="hero-subtitle">
+                Discover concerts, festivals, sports, workshops and more.
+                <br />
+                Get your tickets in seconds — no hassle, just fun.
+            </p>
+
+            <!-- Call-to-action buttons -->
+            <div class="hero-actions">
+                <button id="heroRegisterBtn" class="btn btn-primary btn-large">
+                    Get Started Free
+                </button>
+                <button class="btn btn-ghost btn-large">
+                    Explore Events →
+                </button>
+            </div>
+
+            <!-- Small trust note -->
+            <p class="hero-trust">
+                ✅ Free to sign up &nbsp;|&nbsp; ✅ Secure payments &nbsp;|&nbsp; ✅ Instant confirmation
+            </p>
+
+        </div>
+
+        <!-- Hero visual / decorative side -->
+        <div class="hero-visual">
+            <!-- Decorative event cards floating in background -->
+            <div class="floating-card card-1">
+                <span class="card-emoji">🎵</span>
+                <div>
+                    <p class="card-title">Music Festival</p>
+                    <p class="card-meta">Jakarta • 3,200 going</p>
+                </div>
+            </div>
+
+            <div class="floating-card card-2">
+                <span class="card-emoji">⚽</span>
+                <div>
+                    <p class="card-title">Premier League</p>
+                    <p class="card-meta">Manchester • 45,000 going</p>
+                </div>
+            </div>
+
+            <div class="floating-card card-3">
+                <span class="card-emoji">🎤</span>
+                <div>
+                    <p class="card-title">YOASOBI Asia Tour</p>
+                    <p class="card-meta">Jakarta • 12,500 going</p>
+                </div>
+            </div>
+
+            <!-- Big purple circle decoration -->
+            <div class="hero-circle"></div>
+        </div>
+
+    </section>
+</main>
+
+<div id="loginModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+
+    <div class="modal-box">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2 id="loginTitle" class="modal-title">Welcome Back 👋</h2>
+            <p class="modal-subtitle">Login to access your tickets and events</p>
+            <!-- Close button — JS will close the modal -->
+            <button id="closeLoginBtn" class="modal-close-btn" type="button" aria-label="Close modal">✕</button>
+        </div>
+
+        <!-- Error message box (hidden by default, JS will show it on failure) -->
+        <div id="loginError" class="alert alert-error" style="display: none;"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="modal-form" novalidate>
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="loginEmail" class="form-label">Email Address</label>
+                <input
+                        type="email"
+                        id="loginEmail"
+                        name="email"
+                        class="form-input"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                />
+                <!-- Error message for this specific field -->
+                <span class="field-error" id="loginEmailError"></span>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="loginPassword" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input
+                            type="password"
+                            id="loginPassword"
+                            name="password"
+                            class="form-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                    />
+                    <!-- Toggle password visibility -->
+                    <button type="button" class="toggle-password" id="toggleLoginPassword" aria-label="Toggle password visibility">
+                        👁️
+                    </button>
+                </div>
+                <span class="field-error" id="loginPasswordError"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-full">
+                Login to My Account
+            </button>
+
+        </form>
+
+        <!-- Modal Footer: Switch to Register -->
+        <div class="modal-footer">
+            <p>
+                Don't have an account?
+                <button id="switchToRegister" class="link-btn" type="button">Register here</button>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="registerModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="registerTitle">
+
+    <div class="modal-box">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2 id="registerTitle" class="modal-title">Create Account 🎉</h2>
+            <p class="modal-subtitle">Join thousands booking amazing events</p>
+            <button id="closeRegisterBtn" class="modal-close-btn" type="button" aria-label="Close modal">✕</button>
+        </div>
+
+        <!-- Success message (hidden by default) -->
+        <div id="registerSuccess" class="alert alert-success" style="display: none;"></div>
+
+        <!-- Error message (hidden by default) -->
+        <div id="registerError" class="alert alert-error" style="display: none;"></div>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="modal-form" novalidate>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label for="registerName" class="form-label">Full Name</label>
+                <input
+                        type="text"
+                        id="registerName"
+                        name="name"
+                        class="form-input"
+                        placeholder="John Doe"
+                        autocomplete="name"
+                />
+                <span class="field-error" id="registerNameError"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="registerEmail" class="form-label">Email Address</label>
+                <input
+                        type="email"
+                        id="registerEmail"
+                        name="email"
+                        class="form-input"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                />
+                <span class="field-error" id="registerEmailError"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="registerPassword" class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <input
+                            type="password"
+                            id="registerPassword"
+                            name="password"
+                            class="form-input"
+                            placeholder="Min 8 characters"
+                            autocomplete="new-password"
+                    />
+                    <button type="button" class="toggle-password" id="toggleRegisterPassword" aria-label="Toggle password visibility">
+                        👁️
+                    </button>
+                </div>
+                <span class="field-error" id="registerPasswordError"></span>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+                <label for="registerPhone" class="form-label">Phone Number</label>
+                <input
+                        type="tel"
+                        id="registerPhone"
+                        name="phone"
+                        class="form-input"
+                        placeholder="+91 9876543210"
+                        autocomplete="tel"
+                />
+                <span class="field-error" id="registerPhoneError"></span>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="form-group">
+                <label for="registerRole" class="form-label">I am a...</label>
+                <select id="registerRole" name="role" class="form-input form-select">
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="CUSTOMER">Customer</option>
+                    <option value="ORGANIZER">Organizer</option>
+                </select>
+                <span class="field-error" id="registerRoleError"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="registerSubmitBtn" class="btn btn-primary btn-full">
+                Create My Account
+            </button>
+
+        </form>
+
+        <!-- Modal Footer: Switch to Login -->
+        <div class="modal-footer">
+            <p>
+                Already have an account?
+                <button id="switchToLogin" class="link-btn" type="button">Login here</button>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="js/app.js"></script>
+
+</body>
+</html>

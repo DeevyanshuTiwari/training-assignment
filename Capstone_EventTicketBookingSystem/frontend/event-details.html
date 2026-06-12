@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Details — Eventify</title>
+    <link rel="stylesheet" href="css/customer.css" />
+</head>
+
+<body>
+
+<!-- Atmospheric background -->
+<div class="noise-overlay"></div>
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+
+<!-- ================================================
+     NAVBAR
+================================================ -->
+<header class="c-navbar">
+    <div class="c-navbar-inner">
+        <a href="customer-dashboard.html" class="c-logo">
+            <span class="c-logo-icon">✦</span>
+            <span class="c-logo-text">Event<span class="c-logo-accent">ify</span></span>
+        </a>
+        <nav class="c-nav-links">
+            <a href="customer-dashboard.html" class="c-nav-link">Home</a>
+            <a href="my-bookings.html" class="c-nav-link">My Bookings</a>
+        </nav>
+        <div class="c-nav-right">
+            <div class="c-user-chip">
+                <div class="c-user-avatar" id="navAvatar">U</div>
+                <span class="c-user-name" id="navUserName">Customer</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+</header>
+
+
+<!-- ================================================
+     MAIN CONTENT
+================================================ -->
+<main class="c-page">
+    <div class="c-container-sm">
+
+        <!-- Alert box -->
+        <div class="c-alert" id="detailAlert"></div>
+
+        <!-- Loading skeleton shown while JS fetches event -->
+        <div id="detailSkeleton">
+            <div class="c-skeleton-card" style="height: 380px; margin-bottom: 20px;">
+                <div class="c-skeleton-inner" style="padding:36px;">
+                    <div class="c-skel" style="height:28px; width:60%; margin-bottom:14px;"></div>
+                    <div class="c-skel c-skel-line" style="margin-bottom:8px;"></div>
+                    <div class="c-skel c-skel-line w60"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             EVENT DETAIL CARD
+             Hidden initially; JS fills it and shows it
+        ========================================== -->
+        <div class="c-detail-card" id="detailCard" style="display:none;">
+
+            <!-- Colored top bar -->
+            <div class="c-detail-banner" id="detailBanner"></div>
+
+            <div class="c-detail-body">
+
+                <!-- Cancelled badge (shown by JS only if event.cancelled = true) -->
+                <div id="cancelledBadge" style="display:none; margin-bottom:12px;">
+                    <span class="status-badge cancelled">🚫 Event Cancelled</span>
+                </div>
+
+                <!-- Event title (filled by JS) -->
+                <h1 class="c-detail-title" id="detailTitle">Loading...</h1>
+
+                <!-- Event description (filled by JS) -->
+                <p class="c-detail-description" id="detailDescription"></p>
+
+                <!-- Info grid: 2 columns -->
+                <div class="c-detail-grid">
+                    <div class="c-detail-item">
+                        <span class="c-detail-label">📅 Date & Time</span>
+                        <span class="c-detail-value" id="detailDate">—</span>
+                    </div>
+                    <div class="c-detail-item">
+                        <span class="c-detail-label">📍 Venue</span>
+                        <span class="c-detail-value" id="detailVenue">—</span>
+                    </div>
+                    <div class="c-detail-item">
+                        <span class="c-detail-label">🪑 Total Seats</span>
+                        <span class="c-detail-value" id="detailTotal">—</span>
+                    </div>
+                    <div class="c-detail-item">
+                        <span class="c-detail-label">✅ Available Seats</span>
+                        <span class="c-detail-value" id="detailAvailable">—</span>
+                    </div>
+                    <div class="c-detail-item">
+                        <span class="c-detail-label">💰 Price per Ticket</span>
+                        <span class="c-detail-value" id="detailPrice">—</span>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="c-detail-actions">
+                    <!-- Back button always visible -->
+                    <button class="btn btn-ghost" id="backBtn">← Back</button>
+                    <!-- Book button: hidden by JS if cancelled or no seats -->
+                    <button class="btn btn-primary" id="bookBtn">🎟️ Book Ticket</button>
+                </div>
+
+                <!-- ==========================================
+                     SEATS SELECTOR
+                     Shown when "Book Ticket" is clicked
+                ========================================== -->
+                <div class="c-seats-selector" id="seatsSelector">
+                    <h3>How many tickets?</h3>
+                    <div class="c-seats-row">
+                        <input
+                                type="number"
+                                id="seatsInput"
+                                class="c-seats-input"
+                                value="1"
+                                min="1"
+                        />
+                        <!-- Total price shown here as user changes quantity -->
+                        <span class="c-seats-total">
+                Total: <strong id="totalPriceDisplay">₹0</strong>
+              </span>
+                        <!-- Proceed to payment -->
+                        <button class="btn btn-primary" id="proceedBtn">Proceed to Payment →</button>
+                    </div>
+                    <!-- Validation error shown here -->
+                    <p id="seatsError" style="color: var(--danger); font-size:.85rem; margin-top:8px; display:none;"></p>
+                </div>
+
+            </div><!-- /c-detail-body -->
+        </div><!-- /c-detail-card -->
+
+    </div><!-- /c-container-sm -->
+</main>
+
+
+<!-- JS -->
+<script src="js/customer.js"></script>
+
+</body>
+</html>

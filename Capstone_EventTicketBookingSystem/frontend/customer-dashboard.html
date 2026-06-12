@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Events — Eventify</title>
+    <link rel="stylesheet" href="css/customer.css" />
+</head>
+
+<body>
+
+<!-- Atmospheric background -->
+<div class="noise-overlay"></div>
+<div class="ambient-orb orb-1"></div>
+<div class="ambient-orb orb-2"></div>
+
+<!-- ================================================
+     NAVBAR
+     Logo | Nav links | User chip + Logout
+================================================ -->
+<header class="c-navbar">
+    <div class="c-navbar-inner">
+
+        <!-- Logo -->
+        <a href="customer-dashboard.html" class="c-logo">
+            <span class="c-logo-icon">✦</span>
+            <span class="c-logo-text">Event<span class="c-logo-accent">ify</span></span>
+        </a>
+
+        <!-- Nav links (center) -->
+        <nav class="c-nav-links">
+            <a href="customer-dashboard.html" class="c-nav-link active">Home</a>
+            <a href="my-bookings.html" class="c-nav-link">My Bookings</a>
+        </nav>
+
+        <!-- Right: user name + logout -->
+        <div class="c-nav-right">
+            <div class="c-user-chip">
+                <div class="c-user-avatar" id="navAvatar">U</div>
+                <span class="c-user-name" id="navUserName">Customer</span>
+            </div>
+<!--            <button class="btn btn-ghost btn-sm" id="logoutBtn">Logout</button>-->
+        </div>
+
+    </div>
+</header>
+
+
+<!-- ================================================
+     MAIN PAGE
+================================================ -->
+<main class="c-page">
+    <div class="c-container">
+
+        <!-- Page heading -->
+        <div class="c-section-header">
+            <h1 class="c-section-title">Upcoming Events</h1>
+            <p class="c-section-sub">Browse and book tickets for the best events near you</p>
+        </div>
+
+        <!-- Alert box (success/error messages shown by JS) -->
+        <div class="c-alert" id="dashAlert"></div>
+
+        <!-- ==========================================
+             SEARCH & FILTER BAR
+             All filtering happens client-side in JS
+        ========================================== -->
+        <div class="c-filter-bar">
+
+            <!-- Search by event name -->
+            <div class="c-search-wrap">
+                <span class="c-search-icon">🔍</span>
+                <input
+                        type="text"
+                        id="searchInput"
+                        class="c-search-input"
+                        placeholder="Search events by name..."
+                />
+            </div>
+
+            <!-- Filter by date -->
+            <input
+                    type="date"
+                    id="dateFilter"
+                    class="c-filter-input"
+                    title="Filter by date"
+            />
+
+            <!-- Filter by location/venue -->
+            <input
+                    type="text"
+                    id="venueFilter"
+                    class="c-filter-input"
+                    placeholder="Filter by venue..."
+            />
+
+            <!-- Clear filters -->
+            <button class="c-clear-btn" id="clearFilters">✕ Clear</button>
+
+        </div>
+
+
+        <!-- ==========================================
+             EVENT CARDS GRID
+             JS renders cards here after fetching /api/events/upcoming
+        ========================================== -->
+        <div class="c-events-grid" id="eventsGrid">
+
+            <!-- Skeleton loaders shown while API call is in progress -->
+            <div class="c-skeleton-card">
+                <div class="c-skeleton-inner">
+                    <div class="c-skel c-skel-title"></div>
+                    <div class="c-skel c-skel-line w60"></div>
+                    <div class="c-skel c-skel-line w40"></div>
+                </div>
+            </div>
+            <div class="c-skeleton-card">
+                <div class="c-skeleton-inner">
+                    <div class="c-skel c-skel-title"></div>
+                    <div class="c-skel c-skel-line w60"></div>
+                    <div class="c-skel c-skel-line w40"></div>
+                </div>
+            </div>
+            <div class="c-skeleton-card">
+                <div class="c-skeleton-inner">
+                    <div class="c-skel c-skel-title"></div>
+                    <div class="c-skel c-skel-line w60"></div>
+                    <div class="c-skel c-skel-line w40"></div>
+                </div>
+            </div>
+
+        </div><!-- /eventsGrid -->
+
+    </div><!-- /c-container -->
+</main>
+
+<!-- ================================================
+     PROFILE DRAWER (Side Panel)
+================================================ -->
+<div class="c-profile-overlay" id="profileOverlay"></div>
+
+<aside class="c-profile-drawer" id="profileDrawer">
+
+    <div class="c-drawer-header">
+        <h2 class="c-drawer-title">My Profile</h2>
+        <button class="c-close-btn" id="closeDrawerBtn" title="Close">✕</button>
+    </div>
+
+    <div class="c-drawer-body">
+        <!-- We reuse your existing avatar styling concept here -->
+        <div class="c-profile-avatar-large" id="drawerAvatar">M</div>
+
+        <form id="profileForm" class="c-profile-form">
+            <!-- Reusing your existing .c-alert class for messages -->
+            <div class="c-alert" id="profileAlert"></div>
+
+            <div class="c-form-group">
+                <label class="c-form-label" for="profileName">Full Name</label>
+                <!-- Reusing your .c-filter-input for consistency -->
+                <input type="text" id="profileName" class="c-filter-input w-full" required />
+            </div>
+
+            <div class="c-form-group">
+                <label class="c-form-label" for="profileEmail">Email Address</label>
+                <input type="email" id="profileEmail" class="c-filter-input w-full" required />
+            </div>
+
+            <div class="c-form-group">
+                <label class="c-form-label" for="profilePhone">Phone Number</label>
+                <input type="tel" id="profilePhone" class="c-filter-input w-full" placeholder="e.g. 9876543210" />
+            </div>
+
+            <div class="c-drawer-actions">
+                <!-- Reusing your existing .btn classes -->
+                <button type="submit" class="btn btn-primary btn-full">Update Profile</button>
+                <button type="button" class="btn btn-danger btn-full" id="drawerLogoutBtn">Logout</button>
+            </div>
+        </form>
+    </div>
+
+</aside>
+
+
+<!-- JS -->
+<script src="js/customer.js"></script>
+
+</body>
+</html>
