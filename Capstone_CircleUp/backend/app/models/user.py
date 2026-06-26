@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 from app.db.database import Base
+from sqlalchemy.orm import relationship
 
 
 class User(Base):
@@ -40,4 +41,9 @@ class User(Base):
     created_at = Column(
         DateTime,
         default=datetime.utcnow
+    )
+
+    activities = relationship(
+        "Activity",
+        back_populates="creator"
     )
