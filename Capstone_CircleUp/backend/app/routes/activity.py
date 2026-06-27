@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.core.auth_dependency import get_current_user
 from app.db.dependencies import get_db
+from app.models.participation import Participation
 
 from app.models.user import User
 from app.models.activity import Activity
@@ -18,6 +19,7 @@ from app.schemas.activity import (
     ActivityUpdate,
     ActivityResponse
 )
+from app.schemas.participation import ParticipantResponse
 
 router = APIRouter(
     prefix="/activities",
@@ -208,3 +210,99 @@ def cancel_activity(
     db.refresh(activity)
 
     return activity
+
+
+@router.get("/{activity_id}/organizer-contact")
+def get_organizer_contact(
+        activity_id: int,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    activity = (
+        db.query(Activity)
+        .filter(Activity.id == activity_id)
+        .first()
+    )
+
+    if activity is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Activity not found."
+        )
+
+    participation = (
+        db.query(Participation)
+        .filter(
+            Participation.activity_id == activity_id,
+            Participation.user_id == current_user.id,
+            Participation.status == "APPROVED"
+        )
+        .first()
+    )
+
+    if participation is None:
+        raise HTTPException(
+            status_code=403,
+            detail="Contact information is available only after approval."
+        )
+
+    organizer = (
+        db.query(User)
+        .filter(User.id == activity.created_by)
+        .first()
+    )
+
+    return {
+        "name": organizer.name,
+        "phone_number": organizer.phone_number
+    }
+
+
+@router.get("/{activity_id}/participants", response_model=List[ParticipantResponse])
+def get_approved_participants(
+        activity_id: int,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    activity = (
+        db.query(Activity)
+        .filter(Activity.id == activity_id)
+        .first()
+    )
+
+    if activity is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Activity not found."
+        )
+
+    if activity.created_by != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="Only the organizer can view participants."
+        )
+
+    participants = (
+        db.query(User)
+        .join(
+            Participation,
+            User.id == Participation.user_id
+        )
+        .filter(
+            Participation.activity_id == activity_id,
+            Participation.status == "APPROVED"
+        )
+        .all()
+    )
+
+    return [
+        {
+            "id": participant.id,
+            "name": participant.name,
+            "email": participant.email,
+            "phone_number": participant.phone_number,
+            "city": participant.city,
+            "bio": participant.bio
+        }
+        for participant in participants
+    ]

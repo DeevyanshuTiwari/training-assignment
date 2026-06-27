@@ -11,12 +11,15 @@ from app.models.user import User
 from app.models.activity import Activity
 from app.models.participation import Participation
 
-from app.schemas.participation import ParticipationResponse
 
 router = APIRouter(
     prefix="/participation",
     tags=["Participation"]
 )
+
+
+class ParticipationResponse:
+    pass
 
 
 @router.post(
@@ -85,6 +88,10 @@ def request_participation(
     db.refresh(participation)
 
     return participation
+
+
+class ParticipationResponse:
+    pass
 
 
 @router.get(
