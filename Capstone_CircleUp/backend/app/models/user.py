@@ -47,3 +47,10 @@ class User(Base):
         "Activity",
         back_populates="creator"
     )
+
+    participation_requests = relationship(
+        "Participation",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+

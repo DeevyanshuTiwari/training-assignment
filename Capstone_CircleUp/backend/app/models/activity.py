@@ -76,3 +76,9 @@ class Activity(Base):
         "User",
         back_populates="activities"
     )
+
+    participation_requests = relationship(
+        "Participation",
+        back_populates="activity",
+        cascade="all, delete-orphan"
+    )
