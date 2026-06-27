@@ -1,7 +1,16 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from app.core.auth_dependency import get_current_user
+from app.db.dependencies import get_db
 from app.models.user import User
+
+from typing import List
+
+from app.models.activity import Activity
+from app.schemas.activity import ActivityResponse
+from app.models.participation import Participation
+from app.schemas.participation import ParticipationResponse
 
 router = APIRouter(
     prefix="/users",
@@ -18,3 +27,66 @@ def get_my_profile(
         "name": current_user.name,
         "email": current_user.email
     }
+
+
+@router.get(
+    "/me/activities/created",
+    response_model=List[ActivityResponse]
+)
+def get_created_activities(
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    activities = (
+        db.query(Activity)
+        .filter(
+            Activity.created_by == current_user.id
+        )
+        .all()
+    )
+
+    return activities
+
+
+@router.get(
+    "/me/activities/joined",
+    response_model=List[ActivityResponse]
+)
+def get_joined_activities(
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    activities = (
+        db.query(Activity)
+        .join(
+            Participation,
+            Activity.id == Participation.activity_id
+        )
+        .filter(
+            Participation.user_id == current_user.id,
+            Participation.status == "APPROVED"
+        )
+        .all()
+    )
+
+    return activities
+
+
+@router.get(
+    "/me/participation/pending",
+    response_model=List[ParticipationResponse]
+)
+def get_pending_requests(
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    requests = (
+        db.query(Participation)
+        .filter(
+            Participation.user_id == current_user.id,
+            Participation.status == "PENDING"
+        )
+        .all()
+    )
+
+    return requests
