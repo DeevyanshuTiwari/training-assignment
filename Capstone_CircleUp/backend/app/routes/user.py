@@ -8,9 +8,9 @@ from app.models.user import User
 from typing import List
 
 from app.models.activity import Activity
+from app.schemas.participation import ParticipationResponse
 from app.schemas.activity import ActivityResponse
 from app.models.participation import Participation
-from app.schemas.participation import ParticipationResponse
 
 router = APIRouter(
     prefix="/users",

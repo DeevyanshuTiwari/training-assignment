@@ -7,6 +7,16 @@ class ParticipationCreate(BaseModel):
     pass
 
 
+class ParticipationResponse(BaseModel):
+    id: int
+    activity_id: int
+    user_id: int
+    status: str
+
+    class Config:
+        from_attributes = True
+
+
 class ParticipantResponse(BaseModel):
     id: int
     name: str
