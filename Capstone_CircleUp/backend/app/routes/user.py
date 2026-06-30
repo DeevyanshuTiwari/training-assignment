@@ -11,6 +11,7 @@ from app.models.activity import Activity
 from app.schemas.participation import ParticipationResponse
 from app.schemas.activity import ActivityResponse
 from app.models.participation import Participation
+from app.schemas.user import UserResponse, UserUpdate
 
 router = APIRouter(
     prefix="/users",
@@ -27,6 +28,25 @@ def get_my_profile(
         "name": current_user.name,
         "email": current_user.email
     }
+
+
+@router.put(
+    "/me",
+    response_model=UserResponse
+)
+def update_my_profile(
+        user_update: UserUpdate,
+        current_user: User = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    current_user.phone_number = user_update.phone_number
+    current_user.city = user_update.city
+    current_user.bio = user_update.bio
+
+    db.commit()
+    db.refresh(current_user)
+
+    return current_user
 
 
 @router.get(

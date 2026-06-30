@@ -19,3 +19,8 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserUpdate(BaseModel):
+    phone_number: str | None = None
+    city: str | None = None
+    bio: str | None = None

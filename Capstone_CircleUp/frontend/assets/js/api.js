@@ -93,3 +93,20 @@ export function logout() {
     localStorage.removeItem('circleup_jwt');
     window.location.href = '../index.html';
 }
+
+// ==========================================
+// USER APIs
+// ==========================================
+
+export async function getProfile() {
+    return await apiFetch('/users/me', {
+        method: 'GET'
+    });
+}
+
+export async function updateProfile(profileData) {
+    return await apiFetch('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify(profileData)
+    });
+}
