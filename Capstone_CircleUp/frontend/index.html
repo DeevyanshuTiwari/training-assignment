@@ -202,27 +202,5 @@
 
 <!-- Scripts -->
 <script type="module" src="./assets/js/auth.js"></script>
-<script>
-    // Mobile Navigation Toggle
-    document.addEventListener('DOMContentLoaded', () => {
-        const mobileBtn = document.getElementById('mobile-menu-btn');
-        const desktopNav = document.querySelector('.desktop-nav');
-        const authButtons = document.querySelector('.auth-buttons');
-
-        if (mobileBtn) {
-            mobileBtn.addEventListener('click', () => {
-                desktopNav.classList.toggle('nav-active');
-                authButtons.classList.toggle('nav-active');
-
-                const icon = mobileBtn.querySelector('i');
-                if(desktopNav.classList.contains('nav-active')) {
-                    icon.classList.replace('ph-list', 'ph-x');
-                } else {
-                    icon.classList.replace('ph-x', 'ph-list');
-                }
-            });
-        }
-    });
-</script>
 </body>
 </html>

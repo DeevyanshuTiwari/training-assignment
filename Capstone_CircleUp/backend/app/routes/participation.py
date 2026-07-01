@@ -18,7 +18,6 @@ router = APIRouter(
 )
 
 
-
 @router.post(
     "/activities/{activity_id}/request",
     response_model=ParticipationResponse,

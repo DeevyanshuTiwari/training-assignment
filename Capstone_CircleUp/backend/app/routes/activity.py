@@ -42,7 +42,7 @@ def create_activity(
         activity.activity_time
     )
 
-    if activity_datetime <= datetime.now(timezone.utc):
+    if activity_datetime <= datetime.now():
         raise HTTPException(
             status_code=400,
             detail="Activity must be scheduled in the future."
